@@ -1,31 +1,34 @@
 
 
 import Box from "../elements/Box";
-import Icon from "../elements/Icon";
 import UserItem from "../user/UserItem";
 import usePost from '../../controls/usePost'
 import ImgViewer from "../elements/ImgViewer";
 import CommentMain from "../comment/CommentMain";
+import LikeMain from "../reactions/LikeMain";
+import Option from "../elements/Option";
 
 
 export default function PostItem({ data }) {
-    const {removePost} = usePost()
+  const { removePost } = usePost()
+  const options =[{text:'delete',action:()=>removePost(data?.id)}]
 
   return (
-      <Box className='m-0 p-0 text-gray-600 min-h-[300px] my-5'>
-          <button onClick={_=>removePost(data?.id)}>x</button>
-          <div className="flex justify-between items-center">
+      <Box className='flex flex-col m-0 p-0 text-gray-600 min-h-[300px] my-5'>
+          <div className="flex justify-between items-center ">
               <UserItem userId={data?.userId} >
                   <small>12 minutes ago</small>
               </UserItem>
-              <Icon className='mx-2'>more_horiz</Icon>
+              <Option options={options } />
           </div>
-          <div className="px-3">
-              
-            <p>{data?.body}</p>
+      
+          <div className="px-3 flex-1 ">
+                <p>{data?.body}</p>
           </div>
+          
           <ImgViewer imgs={data?.images} />
-          <CommentMain postId={ data?.id} />
+          <LikeMain col_='posts' likes={data?.likes} loves={ data?.loves} userId={data?.userId} docId={data?.id } />
+              <CommentMain postId={ data?.id} />
     </Box>
   )
 }

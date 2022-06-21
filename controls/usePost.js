@@ -4,6 +4,8 @@ import { getDownloadURL, ref, uploadBytes, uploadBytesResumable } from 'firebase
 import { useEffect } from 'react';
 import create from 'zustand'
 import { db, storage } from '../firebase.config';
+import toolPostAdder from './toolPostAdder';
+import toolRemoveDoc from './toolRemoveDoc';
 import useUser from './useUser';
 const store_ = create(set => ({
     set: data => set(data)
@@ -30,27 +32,18 @@ export default function usePost() {
             userId: user?.uid,
             edited:false,
         }
-        // console.log({ data })
-        const x = await addDoc(collection(db, 'posts'), data)
-        if (imgs) {
-            imgs?.map(async (img,ind) => {
-                const stRef = ref(storage, `/files/posts/${x?.id}/${ind}`)
-                const uploadTask = await uploadBytes(stRef, img?.file)
-                const url = await getDownloadURL(uploadTask.ref)
-                updateDoc(doc(db, 'posts', x?.id), { images: arrayUnion({ ind, url }) })
-                if (ind=> imgs?.length) {
+
+        toolPostAdder(data, imgs, 'posts', () => {
+                     if (ind=> imgs?.length) {
                     set({ imgs: null, body: '' })
                     set({loading:false})
                 }
-            })
-        } else {
-            set({loading:false})
-        }
-    
+        })
     }
 
     async function removePost(id) {
-        const x = await deleteDoc(doc(db, 'posts', id))
+        await toolRemoveDoc('posts',id)
+        
     }
 
     return {

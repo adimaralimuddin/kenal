@@ -2,7 +2,7 @@ import Image from "next/image";
 import { useState } from "react";
 import IconBtn from "./IconBtn";
 
-export default function ImgViewer({ imgs }) {
+export default function ImgViewer({ imgs,className }) {
     const [cur, setCur] = useState(0)
     const [open,setOpen] = useState(false)
     
@@ -12,14 +12,14 @@ export default function ImgViewer({ imgs }) {
 
     const View=()=>{ switch (imgs?.length) {
     case 1:
-        return  <Img ind={ 0} css='min-h-[400px]'/>
+        return  <Img ind={ 0} css={'min-h-[400px] ' + className}/>
     case 2:
-        return <div className="flex min-h-[300px] ">
+        return <div className={"flex min-h-[300px] " + className}>
                     <Img ind={0}/>
                     <Img ind={1}/>
                 </div>
     case 3:
-        return <div className="">
+        return <div className={"" + className}>
                 <Img ind={0} css='min-h-[270px]' />
             <div className="flex min-h-[200px]">
                 <Img ind={1} />
@@ -27,7 +27,7 @@ export default function ImgViewer({ imgs }) {
             </div>
         </div>
     case 4:
-        return <div className="flex min-h-[300px] ring-1">
+        return <div className={"flex min-h-[300px] ring-1 " + className}>
         <button>he</button>
         <div className="flex-1">
 
@@ -40,7 +40,7 @@ export default function ImgViewer({ imgs }) {
         </div>
     </div>
     case 5:
-        return <div className="flex flex-col">
+        return <div className={"flex flex-col " + className}>
             <div className="flex-1 flex min-h-[280px]">
                 <Img ind={0} className='flex-2' />
                 <div className="flex flex-col w-[40%]">
@@ -54,7 +54,7 @@ export default function ImgViewer({ imgs }) {
             </div>
         </div>
     case 6:
-        return <div className="flex flex-col">
+        return <div className={"flex flex-col " +className}>
             <div className="flex-1 flex min-h-[270px]">
                 <Img ind={0} className='flex-2' />
                 <div className="flex flex-col w-[40%]">
@@ -69,7 +69,7 @@ export default function ImgViewer({ imgs }) {
             </div>
         </div>
     case 7:
-        return <div className="flex flex-col">
+        return <div className={"flex flex-col " + className}>
             <div className="flex-1 flex min-h-[270px]">
                 <Img ind={0} className='flex-2' />
                 <div className="flex flex-col w-[40%]">
@@ -94,6 +94,7 @@ export default function ImgViewer({ imgs }) {
 
     return (
         <div>
+            
             <View />
             {open && <div className="z-50 backdrop-blur-lg flex flex-col items-centerd justify-center  fixed top-0 left-0 w-full h-full bg-gray-900 overflow-y-auto bg-opacity-80">
                 <button onClick={_=>setOpen(false)} className="absolute top-0 right-5 text-white font-semibold text-lg hover:font-bold">Close</button>
