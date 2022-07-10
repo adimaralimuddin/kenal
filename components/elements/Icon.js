@@ -1,11 +1,23 @@
-
-
-
-
 export default function Icon(props) {
+  const {
+    type = "line",
+    size = "lg",
+    children,
+    active,
+    className,
+    activeStyle,
+    inActiveStyle,
+    fill = "fill",
+  } = props;
+
   return (
-    <span className={"text-gray-400 m-1 material-icons " + props?.className}>
-{props?.children}
-          </span>
-  )
+    <i
+      {...props}
+      className={`dark:text-gray-400 hover:scale-105 hover:text-gray-500d flex aspect-square items-center justify-center rounded-full
+      ri-${size} ri-${children}-${active ? fill : type} 
+        ${active ? activeStyle : inActiveStyle} ${className} `}
+    >
+      {""}
+    </i>
+  );
 }

@@ -1,27 +1,50 @@
-import { useState } from "react"
-import useReply from "../../controls/useReply"
-import useUser from "../../controls/useUser"
-import Writer from "../elements/Writer"
-import ReplyItem from "./ReplyItem"
+import { useState } from "react";
+import useReply from "../../controls/useReply";
+import ReplyItem from "./ReplyItem";
 
+export default function ReplyMain({ postId, commentId, openReply }) {
+  const [open, setOpen] = useState(false);
+  const { replies, removeReply, updateReply } = useReply(commentId, postId);
 
-
-export default function ReplyMain({ userId, commentId }) {
-    const { user } = useUser()
-    const [open,setOpen] = useState(false)
-    const { replies, addReply,removeReply } = useReply(commentId, userId)
   return (
-      <div>
-          <p onClick={_=>setOpen(p=>!p)} className=" text-end cursor-pointer  -mt-8 mb-3">{ replies?.length || ''} replies</p>
-          {open && <Writer onPost={addReply} user={user} text='reply' />}
-         {open && <div >
-              {
-                  replies?.map(reply => <ReplyItem
-                      data={reply}
-                      onDelete={ removeReply}
-                      key={reply?.id} />)
-              }
-          </div>}
+    <div>
+      <p
+        onClick={(_) => setOpen((p) => !p)}
+        className=" text-endd ring-1d cursor-pointer text-sm text-gray-400  "
+      >
+        {!open
+          ? replies?.length > 1
+            ? replies?.length - 1 + " more replies"
+            : (replies?.length || "no") + " replies"
+          : (replies?.length || "no") + " replies"}
+      </p>
+      {open && (
+        <div className="pt-2">
+          {replies?.map((reply) => (
+            <ReplyItem
+              data={reply}
+              onDelete={removeReply}
+              onUpdate={updateReply}
+              openReply={openReply}
+              key={reply?.id}
+            />
+          ))}
+        </div>
+      )}
+      {!open && replies?.length >= 1 && (
+        <div className="pt-2">
+          {[replies?.[0]]?.map((reply) => (
+            <ReplyItem
+              data={reply}
+              onDelete={removeReply}
+              onUpdate={updateReply}
+              openReply={openReply}
+              key={reply?.id}
+              too="one"
+            />
+          ))}
+        </div>
+      )}
     </div>
-  )
+  );
 }
