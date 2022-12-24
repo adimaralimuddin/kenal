@@ -14,12 +14,7 @@ import create from "zustand";
 import toolGetDoc from "./toolGetDoc";
 
 const store_ = create((set) => ({
-  settings: {
-    blockedusers: [],
-    blockedmessages: [],
-    blockedposts: [],
-    users: [],
-  },
+  settings: null,
   set: (data) => set(data),
 }));
 export default function useSettings() {
@@ -27,11 +22,24 @@ export default function useSettings() {
   const store = store_();
   const { set, settings, users } = store;
 
-  function listen() {
-    if (user?.uid) {
-      return onSnapshot(doc(db, "settings", user?.uid), (doc) => {
+  function listen(userId = user?.uid, passer) {
+    if (userId) {
+      return onSnapshot(doc(db, "settings", userId), (doc) => {
         set({ settings: doc?.data() });
+        passer?.(doc?.data());
       });
+    } else {
+      return () => {};
+    }
+  }
+
+  function listenUserSettings(userId, caller) {
+    if (userId) {
+      return onSnapshot(doc(db, "settings", userId), (doc) => {
+        caller?.(doc?.data());
+      });
+    } else {
+      return () => {};
     }
   }
 
@@ -48,9 +56,9 @@ export default function useSettings() {
     toolUpdateDoc("settings", user?.uid, { [field]: value });
   }
 
-  function block(field, docId) {
-    toolUpdateDoc("settings", user?.uid, {
-      [field]: arrayUnion(docId),
+  async function block(field, userId) {
+    await toolUpdateDoc("settings", user?.uid, {
+      [field]: arrayUnion(userId),
     });
   }
 
@@ -68,5 +76,6 @@ export default function useSettings() {
     unBlock,
     initUsers,
     getUserSettings,
+    listenUserSettings,
   };
 }

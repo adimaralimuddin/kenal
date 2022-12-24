@@ -1,216 +1,171 @@
-import Image from "next/image";
 import { useEffect, useState } from "react";
+import useSettings from "../../controls/useSettings";
 import useStory from "../../controls/useStory";
+import useUser from "../../controls/useUser";
+import { useAlert } from "../elements/Alert";
 import Icon from "../elements/Icon";
 import IconBtn from "../elements/IconBtn";
 import Modal from "../elements/Modal";
-import Writer from "../elements/Writer";
-import UserItem from "../user/UserItem";
+import LikeMain from "../reactions/LikeMain";
 import StoryAdder from "./StoryAdder";
+import StoryComments from "./StoryComments";
 import StoryItem from "./StoryItem";
+import StoryItemViewer from "./StoryItemViewer";
 
 export default function StoryMain() {
-  const { stories, removeStory } = useStory();
+  const { loadFirst, stories, fetchNext } = useStory();
+  const {user} = useUser()
   const [ind, setInd] = useState(0);
   const [open, setOpen] = useState(false);
   const story = () => stories?.[ind];
+  const { settings } = useSettings();
+  const { open: openAlert } = useAlert();
 
   useEffect(() => {
+    loadFirst();
+  }, [settings,user]);
+
+  const forward = () => {
+    if (ind >= stories?.length - 1) {
+      fetchNext((n) => {
+        if (n?.length == 0) {
+          setInd(stories?.length);
+        } else {
+          setInd((p) => p + 1);
+        }
+      });
+    } else {
+      setInd((p) => p + 1);
+    }
+  };
+  const prev = () => {
+    setInd((p) => (p <= 0 ? 0 : p - 1));
+  };
+
+  function onItemOpenHandler(ind) {
+    setOpen(true);
+    setInd(ind);
+  }
+
+  function seeMorehandler() {
+    if (stories?.length == 0 || !stories || !stories?.length) {
+      openAlert(
+        "there are no stories yet. try to add your first story by clicking the add story button."
+      );
+      return;
+    }
+    setOpen(true);
     setInd(0);
-  }, [open]);
-
-  const forward = () => setInd((p) => (p >= stories?.length ? p : p + 1));
-  const prev = () => setInd((p) => (p <= 0 ? 0 : p - 1));
-
+  }
   return (
-    <div className="flex py-2 max-h-[190px] min-h-[190px] ">
-      <div className="flex-1 flex overflow-x-auto py-2">
+    <div className="flex flex-1 max-h-[190px]d min-h-[150px] ">
+      <StoryVisible
+        ind={ind}
+        onItemOpenHandler={onItemOpenHandler}
+        seeMorehandler={seeMorehandler}
+      />
+      <Modal
+        open={open}
+        set={setOpen}
+        className=" p-0 py-0 max-h-[100vh] overflow-x-hidden overflow-y-auto"
+        div="flex-1 content-centerd items-centerd flex flex-wrap max-h-[90vh] w-[100%] justify-center mx-5 px-5  "
+      >
+        <div className="flex ring- flex-col flex-1  max-w-lg min-w-[300px]  min-h-[80vh] px- px-4">
+          <div className=" flex flex-1 items-center pb-3 ">
+            <LeftButton ind={ind} prev={prev} />
+            <div className=" flex flex-col items-center justify-center flex-1 self-stretch">
+              <StoryItemViewer
+                openPar={open}
+                setOpenPar={setOpen}
+                total={stories?.length}
+                ind={ind}
+                story={story}
+                forward={forward}
+              />
+            </div>
+            <RightButton ind={ind} forward={forward} stories={stories} />
+          </div>
+          {stories?.length != ind && (
+            <LikeMain
+              col_="stories"
+              data={story()}
+              className="ml-[5%] mb-2 text-white min-h-[30px] "
+              likeActiveStyle=" text-white bg-indigo-300 p-1 text-white dark:text-white"
+              loveActiveStyle="text-white bg-pink-300 p-1 pt-2 dark:text-white "
+              likeClass="text-white hover:animation-bounce"
+              loveClass="text-white hover:animation-bounce"
+            />
+          )}
+        </div>
+        <StoryComments story={story} ind={ind} total={stories?.length} />
+      </Modal>
+    </div>
+  );
+}
+
+function StoryVisible({ ind = 0, onItemOpenHandler, seeMorehandler }) {
+  const { stories, removeStory } = useStory();
+  return (
+    <>
+      <div className="flex-1 w-[90vw] flex overflow-x-auto py-2  ">
         <StoryAdder />
-        {stories?.map((story) => (
-          <StoryItem data={story} onRemove={removeStory} key={story?.id} />
+        {stories?.map((story, ind) => (
+          <StoryItem
+            data={story}
+            ind={ind}
+            onRemove={removeStory}
+            key={story?.id}
+            onOpen={onItemOpenHandler}
+          />
         ))}
       </div>
       <span className="relative z-10">
-        <div className="to-[50] -left-7 flex absolute h-full items-center">
+        <div className="to-[50] -right-3 flex absolute h-full items-center">
           <Icon
-            onClick={(_) => setOpen(true)}
+            onClick={seeMorehandler}
             className={
-              "shadow-md cursor-pointer text-gray-600d text-white bg-pink-300 hover:bg-pink-400 ring-[3px] ring-white p-2 rounded-full text-2xl w-[50px] h-[50px] text-center "
+              "hover:scale-125 transition shadow-md cursor-pointer text-white bg-gradient-to-r from-pink-400 to-pink-300 bg-pink-300 dark:bg-pink-400  hover:bg-pink-400 dark:hover:bg-pink-500 ring-[3px] ring-white p-2 rounded-full text-2xl w-[43px] h-[43px] text-center dark:text-white"
             }
           >
             arrow-right
           </Icon>
         </div>
       </span>
-      <Modal
-        open={open}
-        set={setOpen}
-        par=""
-        div="flex-1 max-h-[90vh] w-full max-w-lg items-center flex mx-4 px-5"
+    </>
+  );
+}
+
+function LeftButton({ ind, prev }) {
+  return (
+    <span className="relative">
+      <div className="absolute  -left-4 z-10 text-3xl ">
+        <IconBtn
+          className={ind <= 0 && " opacity-50  cursor-not-allowed"}
+          onClick={prev}
+        >
+          arrow-left
+        </IconBtn>
+      </div>
+    </span>
+  );
+}
+
+function RightButton({ ind, forward, stories }) {
+  return (
+    <span className="relative">
+      <div
+        disabled={ind == stories?.length}
+        className="absolute  -right-3 z-10 text-3xl"
       >
-        <span className="relative">
-          <div className="absolute  -left-4 z-10 text-3xl ">
-            <IconBtn
-              className={ind <= 0 && " opacity-50  cursor-not-allowed"}
-              onClick={prev}
-            >
-              arrow-left
-            </IconBtn>
-          </div>
-        </span>
-        <div className=" flex flex-col items-center justify-center flex-1 self-stretch px-3">
-          <StoryItemViewer
-            total={stories?.length}
-            ind={ind}
-            story={story}
-            forward={forward}
-          />
-          <div>
-            <Writer />
-          </div>
-        </div>
-        <span className="relative">
-          <div className="absolute  -right-4 z-10 text-3xl">
-            <IconBtn
-              className={
-                ind == stories?.length && "  opacity-50  cursor-not-allowed"
-              }
-              onClick={forward}
-            >
-              arrow-right
-            </IconBtn>
-          </div>
-        </span>
-      </Modal>
-    </div>
-  );
-}
-
-function StoryItemViewer({ total, ind, story, forward }) {
-  const [imgInd, setImgInd] = useState(0);
-  const [play, setPlay] = useState(true);
-  const [muted, setMuted] = useState(false);
-
-  useEffect(() => {
-    setImgInd(0);
-    setPlay(true);
-    setMuted(false);
-  }, [ind]);
-
-  const next = () =>
-    setImgInd((p) => {
-      if (p < story()?.images?.length - 1) {
-        return p + 1;
-      } else {
-        forward();
-        return 0;
-      }
-    });
-
-  return (
-    <div className=" relative flex-1 flex flex-col rounded-2xl shadow-xl bg-gray-900 bg-opacity-20 p-2 text-white min-h-[300px] w-full max-w-sm overflow-hidden ">
-      <div className="flex flex-cold items-center z-10">
-        {story()
-          ?.images?.sort((a, b) => a?.ind - b?.ind)
-          ?.map((img) => (
-            <TimerItem
-              img={img}
-              next={next}
-              imgInd={imgInd}
-              muted={muted}
-              ind={ind}
-              play={play}
-            />
-          ))}
+        <IconBtn
+          className={
+            ind == stories?.length && "  opacity-50  cursor-not-allowed"
+          }
+          onClick={forward}
+        >
+          arrow-right
+        </IconBtn>
       </div>
-      {total != ind && (
-        <div className="flex items-center justify-between z-10 text-2xl ">
-          <UserItem userId={story()?.userId} />
-          <div>
-            <i
-              onClick={(_) => setPlay((p) => !p)}
-              className={`ri-${
-                play ? "pause" : "play"
-              }-line bg-gray-700 p-2 rounded-full bg-opacity-30 hover:bg-opacity-50 cursor-pointer mx-1`}
-            />
-            <i
-              onClick={(_) => setMuted((p) => !p)}
-              className={`ri-${
-                muted ? "volume-up" : "volume-mute"
-              }-line bg-gray-700 p-2 rounded-full bg-opacity-30 hover:bg-opacity-50 cursor-pointer font-medium`}
-            />
-            <button>
-              <i className={`ri-more-line`} />
-            </button>
-          </div>
-        </div>
-      )}
-      <p className="z-10 text-lg font-semibold">{story()?.body}</p>
-      <div className="flex text-lg font-semibold flex-col py-10 items-center justify-center h-full">
-        {story()?.images?.[imgInd] && (
-          <Image
-            className="brightness-[70%]"
-            src={story()?.images?.[imgInd]?.url}
-            layout="fill"
-            objectFit="cover"
-          />
-        )}
-
-        {total == ind && <p>No More Story</p>}
-      </div>
-    </div>
-  );
-}
-
-function TimerItem({ img, imgInd, next, ind, play, muted }) {
-  const au = new Audio("audio/short.mp3");
-  au.preload = "metadata";
-  const [ct, setCt] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [res, setRes] = useState(false);
-
-  useEffect(() => {
-    setCt(0);
-    setDuration(0);
-  }, [img, ind]);
-
-  useEffect(() => {
-    if (imgInd == img?.ind && play) {
-      au?.play();
-      if (res) {
-        au.currentTime = ct;
-      }
-    }
-    return stop;
-  }, [imgInd, ind, play]);
-
-  useEffect(() => {
-    if (!play) {
-      setRes(true);
-    } else {
-      setRes(false);
-    }
-  }, [play]);
-
-  useEffect(() => {
-    au.volume = muted ? 0 : 1;
-    au.muted = muted;
-  }, [muted]);
-
-  const stop = () => au.pause();
-  au.ontimeupdate = (e) => setCt(au.currentTime);
-  au.onloadedmetadata = (e) => setDuration(e.target.duration);
-  au.onended = next;
-
-  return (
-    <div className="overflow-hidden flex-1 rounded-md bg-gray-400 shadow-md m-[2px] flex flex-col">
-      {muted?.toString()}
-      <div className="flex">
-        <span
-          style={{ width: (ct / duration) * 100 + "%" || 0 }}
-          className="bg-white py-[3px]"
-        ></span>
-      </div>
-    </div>
+    </span>
   );
 }

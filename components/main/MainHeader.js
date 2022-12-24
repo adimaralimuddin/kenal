@@ -1,20 +1,25 @@
-import Icon from "../elements/Icon";
 import NotificationMain from "../notification/NotificationMain";
-import UserMainMenu from "../others/UserMainMenu";
+import UserMainMenu, { ThemeToggle } from "../others/UserMainMenu";
 import Link from "next/link";
+import Alert from "../elements/Alert";
 
-const a = "LhdJ2cqxmkdjkMma4vZUiP6M22z2";
-export default function MainHeader() {
+export default function MainHeader({ className }) {
   return (
-    <div className="bg-white dark:bg-gray-700  shadow-sm  ">
-      <div className="max-w-3xl  mx-auto p-4 pb-1 flex justify-between items-center ">
+    <div
+      className={
+        "bg-slate-50  dark:bg-box-dark transition-colors shadow-sm items-center z-40 " +
+        className
+      }
+    >
+      <Alert />
+      <div className=" max-w-3xl  mx-auto px-4 py-2 flex justify-between items-center  ">
         <Link href="/feed">
-          <h1 className="flex items-center font-bold text-2xl text-pink-400 cursor-pointer">
-            Kenal
+          <h1 className="font-verdana   flex items-center  font-bold text-3xl text-pink-400 dark:text-pink-300 cursor-pointer">
+            kenal
           </h1>
         </Link>
-        <div className="flex items-center">
-          <Icon className="text-2xl mx-3">home-2</Icon>
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
           <NotificationMain />
           <UserMainMenu />
         </div>

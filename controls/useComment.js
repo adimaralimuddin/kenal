@@ -13,18 +13,32 @@ import toolRemoveDoc from "./toolRemoveDoc";
 import toolRemoveFile from "./toolRemoveFile";
 import toolUpdatedoc from "./toolUpdateDoc";
 import useNotifs from "./useNotifs";
+import useRelations from "./useRelations";
+import useSettings from "./useSettings";
 import useUser from "./useUser";
 
-export default function useComment(postId, hookComments = () => {}) {
+export default function useComment(
+  { postId, postUserId } = {},
+  hookComments = () => {}
+) {
   const { user } = useUser();
   const [comments, setComments] = useState();
   const { addNotif } = useNotifs();
+  const { isFollowings } = useRelations();
+  const { settings, getUserSettings } = useSettings();
 
   useEffect(() => {
-    if (!postId) return;
+    const blockedUsers = settings?.blockedusers;
+    if (!postId || !blockedUsers) return;
     const q = query(
       collection(db, "comments"),
       where("postId", "==", postId),
+      where(
+        "userId",
+        "not-in",
+        blockedUsers?.length != 0 ? blockedUsers : ["xxxxxxxxxxxxxxx"]
+      ),
+      orderBy("userId", "desc"),
       orderBy("timestamp", "desc")
     );
     onSnapshot(q, (snap) => {
@@ -32,25 +46,24 @@ export default function useComment(postId, hookComments = () => {}) {
       setComments(comments_);
       hookComments(comments_);
     });
-  }, [postId]);
+  }, [postId, settings]);
 
-  async function addComment(data_, clear) {
+  async function addComment(data_, caller) {
     const data = {
       postId,
+      postUserId,
       userId: user?.uid,
       body: data_?.body,
       status: "public",
     };
-    // console.log(data_);
-    // console.log(data);
-    await toolPostAdder(data, data_?.imgs, "comments", () => {
-      clear();
-    });
-    addNotif(data_?.postUserId, user?.uid, "comment-post", data_?.postId);
+    await toolPostAdder(data, data_?.imgs, "comments", caller);
+    if (postUserId !== user?.uid) {
+      addNotif(data_?.postUserId, user?.uid, "comment-post", data_?.postId);
+    }
   }
 
-  const removeComment = async (id, imgs) => {
-    toolRemoveDoc("comments", id);
+  const removeComment = async (id, imgs, caller) => {
+    toolRemoveDoc("comments", id, caller);
     if (imgs) {
       imgs?.map((img) => {
         toolRemoveFile(`files/comments/${id}/${img?.ind}`);
@@ -70,10 +83,39 @@ export default function useComment(postId, hookComments = () => {}) {
   const updateComment = async (prev, body, images, docId) =>
     toolUpdatedoc("comments", docId, { prev, body, images });
 
+  function checkCommentPrivacy(postUserId, userSettings, comment) {
+    if (postUserId == user?.uid) return true;
+    switch (userSettings?.commentPost) {
+      case "Public":
+        return true;
+      case "Followers":
+        if (isFollowings(undefined, postUserId)) {
+          return true;
+        } else {
+          return false;
+        }
+      default:
+        return false;
+    }
+  }
+
+  async function checkCommentItemPrivacy(comment) {
+    let ret = true;
+    const { userId } = comment;
+    const userSettings = await getUserSettings(userId);
+    const blockedUsers = userSettings?.blockedusers;
+    if (blockedUsers?.find((p) => p == user?.uid)) {
+      ret = false;
+    }
+    return ret;
+  }
+
   return {
     comments,
     addComment,
     removeComment,
     updateComment,
+    checkCommentPrivacy,
+    checkCommentItemPrivacy,
   };
 }

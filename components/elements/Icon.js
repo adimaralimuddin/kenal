@@ -13,9 +13,9 @@ export default function Icon(props) {
   return (
     <i
       {...props}
-      className={`dark:text-gray-400 hover:scale-105 hover:text-gray-500d flex aspect-square items-center justify-center rounded-full
+      className={`text-slate-600 dark:text-gray-400 hover:scale-105 hover:text-gray-500d flex aspect-square items-center justify-center rounded-full
       ri-${size} ri-${children}-${active ? fill : type} 
-        ${active ? activeStyle : inActiveStyle} ${className} `}
+        ${active ? activeStyle : inActiveStyle}  ${className} `}
     >
       {""}
     </i>

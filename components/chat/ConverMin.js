@@ -27,6 +27,7 @@ function ConverMin({ converItem, className }) {
       onMouseLeave={(_) => setActive(false)}
       onMouseEnter={(_) => setActive(true)}
     >
+     
       {active && (
         <Icon
           className={` absolute z-10 bg-white rounded-full p-2 shadow-md -top-3 -right-3 max-w-[30px] max-h-[30px] min-w-[30px] min-h=[30px] flex items-center justify-center text-gray-500 cursor-pointer`}

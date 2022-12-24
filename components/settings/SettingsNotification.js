@@ -8,14 +8,17 @@ function SettingsNotification() {
   // console.log(settings);
 
   const Header = ({ children }) => (
-    <h2 className="text-slate-600 font-semibold">{children}</h2>
+    <h2 className="text-slate-600 dark:text-slate-300 font-semibold">
+      {children}
+    </h2>
   );
   return (
-    <div className="text-gray-500 p-2">
+    <div className="text-gray-500 dark:text-gray-400 p-5">
       <div>
-        <h2 className=" font-bold text-lg text-gray-600">Notification</h2>
+        <h2 className="border-b-2  dark:border-slate-600 font-bold text-lg text-gray-600 dark:text-gray-300 pb-3 mb-3">
+          Notification
+        </h2>
       </div>
-      <hr className="my-2" />
       <div>
         <Header>Posts</Header>
         <Item field="notifreactpost" text="react">
@@ -24,9 +27,15 @@ function SettingsNotification() {
         <Item field="notifcommentpost" text="post comment">
           Notify when someone comment on your post
         </Item>
-        <Item field="notifcommentpost" text="post comment">
+        <Item field="notifsharepost" text="post comment">
           Notify when someone share your post
         </Item>
+        <Item field="notifpostprofile" text="post comment">
+          Notify when someone post on your profile
+        </Item>
+        {/* <Item field="notifpostprofile" text="post comment">
+          Notify when someone post on your profile
+        </Item> */}
         <Header>Comments</Header>
         <Item field="notifreactcomment" text="reply">
           Notify when someone react on your comment
@@ -69,7 +78,7 @@ function Item({ field, title, children, text, actionText }) {
   }
 
   return (
-    <div className="p-2 hover:ring-indigo-50 ring-1 rounded-md ring-slate-200 my-3">
+    <div className="p-2 hover:ring-indigo-50 border-b dark:border-slate-700 rounded-mdd ring-slate-200  my-3">
       <div className="flex items-center justify-between text-sm ">
         <p>{children}</p>
         <Toggle defVal={settings?.[field]} onToggle={onToggleHandler} />

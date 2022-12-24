@@ -1,0 +1,195 @@
+must sort everyting by timestamp (notifs,post,stories,comments,replies,users)
+
+
+----------------------------------
+
+
+
+post 
+add, edit, delete
+like, love
+comment
+verifier
+
+comment
+add, edit, delete
+like, love
+reply
+verifier
+
+reply
+add, edit, delete
+like, love
+reply
+verifier
+
+story
+add, edit, delete
+like, love
+comment
+verifier
+
+-------------
+-image viewer must set layout to containt/
+-post body textes/
+-must see my own post even it's set to only me/
+-must sort the post in time order/
+-must not see blocked user or user's post/
+-must not see post privacy=followers unless user is being followed/
+-unable to post to someone's feed/
+-must not add 'to' on post to my own post/
+-must comment on your own post/
+-must not mention oneself on a comment or a reply/
+-must not sent notification to yourself by yourself/
+-must auto create new user's credentials for new signed int user/
+- unlogin user authority on front end and security/
+-add verifier to all actions
+-must add options to someone postitem (save,block)/
+must not see blocked user everywhere/
+must not see block user post on usermainpage/
+-must add a more-option function to any userinfo or profile page/
+- must see correct post on usermainpage/
+-must not add oneself to blockuser list/
+repair aboutuser editor and viewer/
+-must put joined-on on profileinfopop into real data/
+must higletn unseen notifitem
+check notif features/
+-must redirect to a page when notif item clicked/
+-must protect pages for unAuth and auth user /
+unlogedin user must still see usermainpage (profile)/
+must not delete update others, story, post, comment, reply, storycomment/
+must able to block unblock stories/
+must not able to see stories of blocked user/
+change the mp3 file on story play/
+must not ablet to see blocked user anywhere/
+must see option icon when in mobile size page/
+add loader when posting(story,post,comment,reply,storycomment) 
+make real descritpn on each blocking settings /
+must not see the person who blocked your account
+story pagination//
+paginate posts
+image editor on post editor/
+-build a home page
+add a video to post
+must also delete files when post is updated
+must show updated post one time only
+add a video to story
+file length and size limits/
+must not upload file more than 10 and file is large
+must not see story viwer when there are no stories
+post editor styles and texts etc...
+story viewer - unable to see own story
+notify when someone is chatting
+notification style
+post edit privacy
+must able to block chat on someone
+can see chat
+story comment allow privacy
+story privacy/edit
+
+
+
+------------------------------------------------------
+
+
+-----
+check
+
+account************
+
+
+chat*****************
+create/
+like/
+love/
+block------------
+
+
+
+
+privacy settings*****************
+who can see your future post
+who can see the people you follow
+who can see your followers
+who can post on your profile
+who can see what others posts on your profile
+who can comment on your public posts
+who can see your about information
+who can reach to chat you
+
+notif settings*****************
+post react
+post comment
+post share
+profile post
+comment react
+comment reply
+reply react
+reply mention
+post tag
+follow
+unfollow
+
+block settings********************
+users
+chats
+posts
+stories
+
+=======================
+
+create user/
+signinWithEmail/
+signinWithPopUp/
+logout/
+
+post************
+create/
+edit/
+delete/
+love/
+like/
+block/---------
+privacy/
+
+commnet***********
+create/
+edit/
+delete/
+love/
+like/
+privacy/
+
+reply***********
+create/
+edit/
+delete/
+love/
+like/
+
+story**************
+create/
+edit/
+delte
+love/
+like/
+block/
+
+story comment**************
+create/
+edit/
+delete/
+love/
+like /
+block/
+
+relation******************
+follow,unfollow/
+block,unblock/
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+kenal
+tasky
+toko
+lang

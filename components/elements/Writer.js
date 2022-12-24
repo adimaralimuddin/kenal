@@ -3,6 +3,8 @@ import Avatar from "./Avatar";
 import { useState } from "react";
 import ImgInput from "./ImgInput";
 import ImgEditor from "./ImgEditor";
+import useUser from "../../controls/useUser";
+import { useAlert } from "./Alert";
 
 export default function Writer({
   text = "post",
@@ -15,12 +17,21 @@ export default function Writer({
   replyTo,
   className,
   autoFocus = true,
+  allowImages = true,
+  setOpen,
 }) {
-  const [body, setBody] = useState();
+  const [body, setBody] = useState("");
   const [imgs, setImgs] = useState({ imgs: [] });
   const [replyTo_, setReplyTo] = useState(replyTo);
+  const [uploading, setUploading] = useState(false);
+  const { open } = useAlert();
 
   const handlePost = () => {
+    if (!user) {
+      setOpen?.(false);
+      return open("you must signin to post.");
+    }
+
     const data = {
       body: body?.replace("@" + replyTo?.[1] + " ", ""),
       imgs: imgs?.imgs,
@@ -29,6 +40,7 @@ export default function Writer({
     if (replyTo) {
       data.replyTo = replyTo;
     }
+    setUploading(true);
     onPost(data, clear);
     onPostCaller?.();
   };
@@ -36,6 +48,7 @@ export default function Writer({
   function clear() {
     setImgs({ imgs: [] });
     setBody("");
+    setUploading(false);
   }
 
   function onKeyEnter(e) {
@@ -57,7 +70,11 @@ export default function Writer({
   return (
     <div className={className}>
       <div className={"flex w-full items-center flex-wrap " + div}>
-        <Avatar size={small ? 30 : 35} src={user?.photoURL} />
+        <Avatar
+          size={small ? 30 : 35}
+          src={user?.photoURL}
+          userName={user?.userName || user?.email}
+        />
         <textarea
           autoFocus={autoFocus}
           value={body}
@@ -71,18 +88,22 @@ export default function Writer({
           className=" min-w-[10px] flex h-[34px] ring-1d items-center justify-center min-h-[30px] resize-none ring-d1 max-h-[150px] overflow-y-auto flex-1 my-0 text-sm bg-transparent py-[7px] px-2"
           placeholder={"Write a " + text + " ..."}
         />
-        <ImgInput single={single} set={setImgs}>
-          <button className=" flex items-center">
-            <Icon>image-add</Icon>
-          </button>
-        </ImgInput>
+        {allowImages && (
+          <ImgInput single={single} set={setImgs}>
+            <button className=" flex items-center">
+              <Icon>image-add</Icon>
+            </button>
+          </ImgInput>
+        )}
         <button className=" flex items-center" onClick={handlePost}>
           <Icon>reply</Icon>
         </button>
       </div>
-      <div>
-        <ImgEditor imgs={imgs?.imgs} set={setImgs} />
-      </div>
+      {!uploading && (
+        <div>
+          <ImgEditor imgs={imgs?.imgs} set={setImgs} />
+        </div>
+      )}
     </div>
   );
 }

@@ -1,6 +1,8 @@
 import { doc, onSnapshot } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db } from "../../firebase.config";
+import Postitem from "../post/PostItem";
+import MainLayout from "../main/MainLayout";
 
 export default function PostDetailPage({ postId }) {
   const [post, setPost] = useState(null);
@@ -12,6 +14,18 @@ export default function PostDetailPage({ postId }) {
       });
     }
   }, [postId]);
-
-  return <div>{post?.body}</div>;
+  return (
+    <MainLayout>
+      {post && (
+        <div className="px-2 max-w-xl mx-auto">
+          <Postitem data={post} />
+        </div>
+      )}
+      {!post && (
+        <div>
+          <h1>This post does not exist!</h1>
+        </div>
+      )}
+    </MainLayout>
+  );
 }

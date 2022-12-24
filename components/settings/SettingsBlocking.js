@@ -1,31 +1,33 @@
-import useSettings from "../../controls/useSettings";
 import BlockingLists from "./SettingsBlockingList";
 
 function SettingsBlocking() {
-  const { settings } = useSettings();
-
   return (
-    <div className="text-gray-500 p-2 py-5">
-      <h3 className="font-bold text-gray-600 text-lg py-2">Blocking</h3>
+    <div className="text-gray-500 dark:text-gray-400 p-5 ">
+      <h3 className="font-bold border-b-2 dark:border-slate-600 text-gray-600 dark:text-gray-300 text-lg pb-3 mb-3">
+        Blocking
+      </h3>
       <BlockingLists field="blockedusers" title="Users blocking">
-        Once you block someone, that person can no longer see things you post on
-        your timeline, tag you, invite you to events or groups, start a
-        conversation with you, or add you as a friend. Note: Does not include
-        apps, games or groups you both participate in.
-      </BlockingLists>
-
-      <BlockingLists field="blockedchats" title="Chats blocking">
-        If you block messages and video calls from someone here, they won't be
-        able to contact you in the Messenger app either. Unless you block
-        someone's profile, they may be able to post on your timeline, tag you,
-        and comment on your posts or comments.
+        Once you block someone, you can no longer see things from that person.
+        and that person can no longer see things from you such as your stories,
+        post, comments and replies. they can no longer see your post instantly,
+        while comments and replies take affect after they had refreshed thier
+        page.
       </BlockingLists>
 
       <BlockingLists field="blockedposts" title="Posts blocking">
-        If you block messages and video calls from someone here, they won't be
-        able to contact you in the Messenger app either. Unless you block
-        someone's profile, they may be able to post on your timeline, tag you,
-        and comment on your posts or comments.
+        If you block someone's posts here, you won't be able to see things they
+        post. you may still see thier stories, comments and replies as well as
+        thier other information according to thier settings.
+      </BlockingLists>
+      <BlockingLists field="blockedstories" title="Stories blocking">
+        If you block someone's stories, you can no longer see stories posted by
+        theme. you may still see thier posts, comments, replies anywere as well
+        as thier other informations according to thier settings.
+      </BlockingLists>
+      <BlockingLists field="blockedchats" title="Chats blocking">
+        If you block chats from someone here, they won't be able to chat you.
+        howerver they may still see things you post. reply on your post, and
+        sees information according to your settings.
       </BlockingLists>
     </div>
   );

@@ -27,7 +27,7 @@ export default function UsersListPop({
       <p className="text-center">{text}</p>
       <div>
         {users?.map((userId) => (
-          <UserItem className="py-0" userId={userId} small="on" />
+          <UserItem key={userId} className="py-0" userId={userId} small="on" />
         ))}
       </div>
     </Droper>

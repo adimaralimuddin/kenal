@@ -3,7 +3,7 @@ export default function Box(props) {
     <div
       {...props}
       className={
-        ` bg-white dark:bg-slate-700 dark:ring-gray-800 dark:text-gray-400 p-3 rounded-lg m-2  ` +
+        ` bg-white dark:bg-box-dark dark:ring-gray-900 dark:text-gray-400 p-3 rounded-lg m-2  ` +
         props?.className
       }
     >

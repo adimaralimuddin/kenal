@@ -19,15 +19,22 @@ export default async function toolPostAdder(
     ...data,
     timestamp: serverTimestamp(),
   });
+  call?.(x);
+
   if (imgs) {
+    updateDoc(doc(db, col_, x?.id), {
+      imgLength: imgs?.length || 0,
+    });
+
     imgs?.map(async (img, ind) => {
       const stRef = ref(storage, `/files/${col_}/${x?.id}/${ind}`);
       const uploadTask = await uploadBytes(stRef, img?.file);
       const url = await getDownloadURL(uploadTask.ref);
-      updateDoc(doc(db, col_, x?.id), { images: arrayUnion({ ind, url }) });
-      if ((ind) => imgs?.length) {
-        call();
-      }
+      updateDoc(doc(db, col_, x?.id), {
+        images: arrayUnion({ ind, url, type: img?.type }),
+      });
     });
   }
+
+  return x;
 }

@@ -1,14 +1,12 @@
 import { useState } from "react";
 import useReaction from "../../controls/useReaction";
 import useUser from "../../controls/useUser";
+import { useAlert } from "../elements/Alert";
 import Icon from "../elements/Icon";
 import UsersListPop from "../user/UsersListPop";
 
 export default function LikeMain({
-  docId,
-  docUserId,
-  likes = [],
-  loves = [],
+  data,
   col_,
   size,
   className,
@@ -21,6 +19,8 @@ export default function LikeMain({
 }) {
   const { user } = useUser();
   const { like, love } = useReaction();
+  const { open: openAlert } = useAlert();
+
   const [open, setOpen] = useState(false);
   const [openL, setOpenL] = useState(false);
   const [show, setShow] = useState(false);
@@ -36,6 +36,10 @@ export default function LikeMain({
     setTimeout(() => {
       setOpenL(true);
     }, 500);
+  }
+
+  function alertNoUser(val = "like") {
+    return openAlert(`Please signin to ${val} this post.`);
   }
 
   return (
@@ -54,12 +58,23 @@ export default function LikeMain({
           onMouseEnter={openLike}
           onMouseLeave={(_) => setOpen(false)}
           className="flex items-center min-w-[50px] py-0 my-0"
-          onClick={(_) => like(docId, user?.uid, likes, col_, docUserId)}
+          onClick={(_) => {
+            if (!user) {
+              return alertNoUser();
+            }
+            like(
+              data?.id,
+              user?.uid,
+              data?.likes,
+              col_,
+              Array.isArray(data?.userId) ? data?.userId?.[0] : data?.userId
+            );
+          }}
         >
           <UsersListPop
             show={show}
             par="top-5"
-            users={likes}
+            users={data?.likes}
             open={open}
             set={setOpen}
             text="Likers"
@@ -67,14 +82,14 @@ export default function LikeMain({
 
           <Icon
             size={size}
-            active={likes?.find((i) => i == user?.uid)}
+            active={data?.likes?.find((i) => i == user?.uid)}
             activeStyle={likeActiveStyle}
             fill={likeFill}
             className={likeClass}
           >
             thumb-up
           </Icon>
-          <small>{likes?.length || ""}</small>
+          <small>{data?.likes?.length || ""}</small>
         </button>
       </div>
 
@@ -92,26 +107,39 @@ export default function LikeMain({
           onMouseEnter={openLove}
           onMouseLeave={(_) => setOpenL(false)}
           className="flex items-center min-w-[50px] py-0 my-0"
-          onClick={(_) => love(docId, user?.uid, loves, col_, docUserId)}
+          onClick={(_) => {
+            if (!user) {
+              return alertNoUser("love");
+            }
+            love(
+              data?.id,
+              user?.uid,
+              data?.loves,
+              col_,
+              // data?.userId?.[0] || data?.userId
+              Array.isArray(data?.userId) ? data?.userId?.[0] : data?.userId
+              // Array.isArray(data?.userId) ? data?.userId?.[0] : data?.userId
+            );
+          }}
         >
           <UsersListPop
             show={showL}
             par="top-5"
-            users={loves}
+            users={data?.loves}
             open={openL}
             set={setOpenL}
             text="Lovers"
           />
           <Icon
             size={size}
-            active={loves?.find((i) => i == user?.uid)}
+            active={data?.loves?.find((i) => i == user?.uid)}
             activeStyle={loveActiveStyle}
             fill={loveFill}
             className={loveClass}
           >
             heart
           </Icon>
-          <small>{loves?.length || ""}</small>
+          <small>{data?.loves?.length || ""}</small>
         </button>
       </div>
     </div>

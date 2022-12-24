@@ -1,31 +1,61 @@
 import { useState } from "react";
+import useRelations from "../../controls/useRelations";
 import Box from "../elements/Box";
 import Modal from "../elements/Modal";
 import UserItem from "./UserItem";
 
-export default function UserRelationsCaption({ relation, postsLength }) {
+export default function UserRelationsCaption({
+  userId,
+  relation,
+  postsLength,
+  authId,
+  noPost = false,
+}) {
+  const { showFollowings, showFollowers } = useRelations();
+  // return null;
+  if (!userId || !authId || !relation) return null;
+
   return (
-    <div className="flex items-center pb-2 justify-between text-gray-500 mx-auto w-full max-w-lg pt-3">
-      <div className="flex flex-col text-center flex-1 cursor-pointer  hover:underline">
-        <p>{postsLength}</p>
-        <p>Posts</p>
-      </div>
-      <Item data={relation?.followers} text="Followers" />
-      <Item data={relation?.followings} text="Followings" />
+    <div className="flex items-center py-5d justify-center px-3 text-gray-500 dark:text-gray-500 mx-auto w-full max-w-lg  flex-wrap gap-x-2 ">
+      {!noPost && (
+        <div className="flex gap-2 text-center flex-1 cursor-pointer  hover:underline">
+          <p>{postsLength}</p>
+          <p>Posts</p>
+        </div>
+      )}
+      <Item
+        key="followers"
+        data={relation?.followers}
+        show={showFollowers}
+        text="Followers"
+        authId={authId}
+        userId={userId}
+      />
+      <Item
+        key="followings"
+        data={relation?.followings}
+        show={showFollowings}
+        text="Followings"
+        authId={authId}
+        userId={userId}
+      />
     </div>
   );
 }
 
-function Item({ data, text }) {
+function Item({ data, text, show, authId, userId }) {
   const [open, setOpen] = useState(false);
+  if (!show && authId !== userId) return null;
 
   return (
     <div
       onClick={(_) => setOpen((p) => !p)}
-      className="flex flex-col text-center flex-1 cursor-pointer  hover:underline"
+      className="flex flex-col text-center flex-1 cursor-pointer  hover:underline py-5 animate-pop"
     >
-      <p>{data?.length || 0}</p>
-      <p>{text}</p>
+      <div className="flex gap-2 items-center justify-center ring-1d">
+        <h3 className="font-semibold text-lg">{data?.length || 0}</h3>
+        <p>{text}</p>
+      </div>
       <Modal
         open={open}
         set={setOpen}
@@ -37,7 +67,7 @@ function Item({ data, text }) {
           <hr />
           <div className="px-2">
             {data?.map((userId) => (
-              <UserItem userId={userId} />
+              <UserItem userId={userId} key={userId} />
             ))}
           </div>
           {(data?.length <= 0 || !data) && (

@@ -1,40 +1,81 @@
 import { useEffect, useState } from "react";
+import useComment from "../../controls/useComment";
 import useReply from "../../controls/useReply";
+import useSettings from "../../controls/useSettings";
 import useUser from "../../controls/useUser";
+import { useAlert } from "../elements/Alert";
 import EditHist from "../elements/EditHist";
 import Icon from "../elements/Icon";
 import ImgViewer from "../elements/ImgViewer";
 import Option from "../elements/Option";
 import PostBody from "../elements/PostBody";
+import Verifier from "../elements/Verifier";
 import Writer from "../elements/Writer";
+import Comp from "../main/Comp";
 import PostEditorMain from "../postEditor/PostEditorMain";
 import LikeMain from "../reactions/LikeMain";
 import ReplyMain from "../reply/ReplyMain";
 import UserItem from "../user/UserItem";
 
-export default function CommentItem({ data, onDelete, onUpdate }) {
+function CommentItem({ data, onDelete, onUpdate, state, par }) {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(false);
   const [viewEdit, setViewEdit] = useState(false);
   const { user } = useUser();
-  const [poster, setPoster] = useState();
   const [openComment, setOpenComment] = useState(false);
   const { addReply } = useReply(data.id, data?.postId);
   const [replyTo, setReplyTo] = useState();
+  const [deleting, setDeleting] = useState(false);
+  const { pop, open: openAlert } = useAlert();
+
+  const { listenUserSettings } = useSettings();
+  const { checkCommentItemPrivacy } = useComment();
+  const [privacy, setPrivacy] = useState();
+  const [comments, setComments] = par;
+
+  useEffect(() => {
+    const retSettings = listenUserSettings(
+      data?.userId,
+      state?.key?.("postUserSettings")
+    );
+    return retSettings;
+  }, [data?.userId]);
+
+  useEffect(() => {
+    checkPrivacy();
+  }, [data]);
+  async function checkPrivacy() {
+    const privacy_ = await checkCommentItemPrivacy(data);
+    setPrivacy(privacy_);
+    if (!privacy_) {
+      setComments((c) => {
+        return c?.filter((c) => c?.id !== data?.id);
+      });
+    }
+  }
+
+  if (!privacy) return null;
+
+  const onDeleteComment = () => {
+    openAlert("Deleting comment . . . ", true);
+    onDelete(data?.id, data?.images, () => {
+      pop("Comment deleted!", "check");
+    });
+  };
 
   const options = [
-    {
-      text: "Delete Comment",
-      action: () => onDelete(data?.id, data?.images),
-      promt: true,
-      secure: true,
-      icon: "delete-bin-5",
-    },
     {
       text: "Edit Comment",
       action: () => setOpen(true),
       secure: true,
       icon: "edit-2",
+    },
+    {
+      text: "Delete Comment",
+      action: () => setDeleting(true),
+      promt: true,
+      secure: true,
+      icon: "delete-bin-5",
     },
   ];
 
@@ -51,15 +92,23 @@ export default function CommentItem({ data, onDelete, onUpdate }) {
       onMouseLeave={(_) => setActive(false)}
       className="ring-1d p-0 m-0"
     >
-      <div className="flex items-start">
-        <UserItem
-          userId={data?.userId}
-          noName="on"
-          small="on"
-          className="px-0 py-0"
-          passer={setPoster}
-        />
-        <div className="pt-2 px-1 w-full">
+      <Verifier
+        text="Are you sure to delete this comment?"
+        open={deleting}
+        set={setDeleting}
+        onYes={onDeleteComment}
+      />
+      <div className="py-3">
+        <div className=" -mb-5">
+          <UserItem
+            userId={data?.userId}
+            postUserSettings={state?.postUserSettings}
+            noName="on"
+            small="on"
+            className="px-0 py-0"
+          />
+        </div>
+        <div className="pt-2 px-1 w-full pl-4">
           <div className="flex">
             <PostBody
               header={
@@ -69,19 +118,20 @@ export default function CommentItem({ data, onDelete, onUpdate }) {
                   className="ring-1d my-0 py-0 "
                 />
               }
-              className=" bg-slate-200 dark:bg-slate-600"
+              className=" bg-slate-200 dark:bg-d1 dark:text-slate-400"
               body={data?.body}
             >
               {viewEdit && (
                 <EditHist prev={data?.prev} date={data?.updatedAt} />
               )}
             </PostBody>
-            {active && (
+            {active && user?.uid == data?.userId && (
               <Option
                 className="pt-2 mx-2"
                 options={options}
                 authId={user?.uid}
                 userId={data?.userId}
+                onlyUser={true}
               />
             )}
           </div>
@@ -91,21 +141,14 @@ export default function CommentItem({ data, onDelete, onUpdate }) {
             onUpdate={onUpdate}
             setOpen={setOpen}
           />
-          <ImgViewer
-            className="min-h-[190px] max-w-[250px]"
-            imgs={data?.images}
-          />
+          <ImgViewer className=" max-w-[450px] my-2" imgs={data?.images} />
           <div className=" flex items-center pt-[1px]">
             <LikeMain
               size="1x"
-              // userId={data?.userId}
-              docUserId={data?.userId}
-              docId={data?.id}
+              data={data}
               col_="comments"
-              likes={data?.likes}
-              loves={data?.loves}
-              // likeActiveStyle=" text-blue-300"
-              // loveActiveStyle=" text-pink-400"
+              likeActiveStyle="text-indigo-300 dark:text-indigo-400"
+              loveActiveStyle="text-pink-300 dark:text-pink-400"
             />
             {active && (
               <button
@@ -120,7 +163,11 @@ export default function CommentItem({ data, onDelete, onUpdate }) {
             postId={data?.postId}
             commentId={data?.id}
             openReply={(replier) => {
-              setReplyTo(replier);
+              if (replier?.[0] == user?.uid) {
+                setReplyTo(null);
+              } else {
+                setReplyTo(replier);
+              }
               setOpenComment(false);
               setTimeout(() => {
                 setOpenComment(true);
@@ -136,6 +183,7 @@ export default function CommentItem({ data, onDelete, onUpdate }) {
                   addReply(
                     {
                       ...data_,
+                      postUserId: data?.postUserId,
                       commentUserId: data?.userId,
                       commentId: data?.id,
                       postId: data?.postId,
@@ -154,3 +202,6 @@ export default function CommentItem({ data, onDelete, onUpdate }) {
     </div>
   );
 }
+
+export default CommentItem;
+// export default Comp(CommentItem);

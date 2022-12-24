@@ -1,4 +1,4 @@
-import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db } from "../../firebase.config";
 import Avatar from "../elements/Avatar";
@@ -11,12 +11,14 @@ export default function UserItem({
   noName,
   noImg,
   className,
+  textClass = " text-slate-600 dark:text-slate-400 inline -block dwhitespace-nowrap   font-semibold text-sm  underline-offset-1 ",
   small,
   pop = true,
   size,
   par,
   passer = () => {},
   inlineText,
+  postUserSettings,
 }) {
   const [data_, setData] = useState();
   const [open, setOpen] = useState(false);
@@ -55,24 +57,24 @@ export default function UserItem({
         par={" -top-5 pt-12 " + par}
         div=" shadow-xl rounded-xl "
         show={showPop}
-        // open={true}
+        postUserSettings={postUserSettings}
         open={open && pop}
         set={setOpen}
         userId={userId}
         data={data_}
       />
-
       {!noImg && (
-        <div className="flex">
+        <div className="flex ">
           <Avatar
-            className="cursor-pointer"
+            className="cursor-pointer "
             onMouseOver={toOpen}
             src={data_?.avatar}
+            userName={data_?.userName}
             size={size || (small ? 30 : 35)}
           />
           {data_?.online && (
             <span className="relative">
-              <div className="absolute top-0 right-0 ring-2 ring-white bg-pink-400 p-1 rounded-full"></div>
+              <div className=" absolute top-0 right-0 ring-2 ring-white bg-pink-400 p-1 rounded-full"></div>
             </span>
           )}
         </div>
@@ -88,8 +90,9 @@ export default function UserItem({
             <h2
               onMouseEnter={toOpen}
               className={
-                "inline -block dwhitespace-nowrap  cursor-pointer font-semibold text-sm hover:underline underline-offset-1 " +
-                (small && "text-smd")
+                textClass +
+                (small && " text-smd ") +
+                (pop && " hover:underline cursor-pointer ")
               }
             >
               {data_?.userName}

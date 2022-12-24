@@ -1,20 +1,14 @@
 import { useEffect, useState } from "react";
 import useChat from "../../controls/useChat";
-import Box from "../elements/Box";
 import ConverItem from "./ConverItem";
 import ConverMin from "./ConverMin";
 
 export default function ChatMain() {
-  const { convers, minimizeConver, minimized, openedd } = useChat();
+  const { convers } = useChat();
   const [width, setWidth] = useState();
-
-  function opened(passer) {
-    return passer?.(convers?.filter((c) => c?.open == true));
-  }
 
   useEffect(() => {
     window.onresize = (e) => {
-      console.log(e.target.innerWidth, window.innerWidth);
       setWidth(window.innerWidth);
     };
   }, []);
@@ -32,7 +26,6 @@ export default function ChatMain() {
                   width={width}
                   converItem={con}
                   ind={ind}
-                  // key={con?.id}
                   key={con[0] + con[1]}
                 />
               );

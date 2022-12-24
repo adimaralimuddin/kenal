@@ -16,14 +16,24 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../../firebase.config";
+import useNotifs from "../../controls/useNotifs";
+import useSettings from "../../controls/useSettings";
 
 export default function ConverItem({ converItem, ind, width }) {
-  const { conver } = converItem;
+  const { conver, id: converId } = converItem;
   const { user } = useUser();
-  const { initConver, addChat, minimizeConver, closeConver, removeConver } =
-    useChat();
+  const {
+    addChat,
+    minimizeConver,
+    closeConver,
+    removeConver,
+    checkChatPrivacy,
+    set,
+  } = useChat();
   const [minimized, setMinimized] = useState(false);
   const [chats, setChats] = useState([]);
+  const { addNotif } = useNotifs();
+  const { getUserSettings } = useSettings();
 
   useEffect(() => {
     check();
@@ -56,7 +66,15 @@ export default function ConverItem({ converItem, ind, width }) {
     }
   }
 
+
+  // const checkPrivacy = () => {
+    
+  // }
+
   useEffect(() => {
+    // const u = getUserSettings(conver?.[1]);
+    // console.log("useru ", u);
+
     const q = query(
       collection(db, "chats"),
       where("converId", "in", [conver?.[1] + conver?.[0], conver?.join("")]),
@@ -64,23 +82,40 @@ export default function ConverItem({ converItem, ind, width }) {
     );
 
     onSnapshot(q, (snap) => {
-      console.log({ snap });
       setChats(snap?.docs?.map((d) => ({ ...d.data(), id: d.id })));
     });
-
-    // setChats([]);
-    // initConver(conver[0], conver[1], (chats_) => {
-    //   setChats(chats_);
-    // });
   }, [conver]);
 
-  console.log(chats);
+  useEffect(() => {
+    checkPrivacy();
+  }, [conver]);
 
-  function onAddChat({ body, imgs }, clear) {
-    addChat(
-      { data: { conver, body, converId: conver[0] + conver[1] }, imgs },
+  async function checkPrivacy() {
+    const privacy = await checkChatPrivacy(conver);
+    if (!privacy) {
+      set((p) => {
+        const convers = p?.convers?.filter((p) => p?.id !== converId);
+        return { convers };
+      });
+    }
+  }
+
+  async function onAddChat({ body, imgs }, clear) {
+    checkPrivacy();
+    const chat = await addChat(
+      {
+        data: {
+          conver,
+          body,
+          converId: conver[0] + conver[1],
+          userId: [user?.uid],
+        },
+        imgs,
+      },
       clear
     );
+    console.log("chat ", chat);
+    addNotif(conver[1], user?.uid, "chat", conver?.toString());
   }
 
   if (minimized) {
@@ -89,6 +124,7 @@ export default function ConverItem({ converItem, ind, width }) {
 
   return (
     <Box className="flex mx-2 flex-col shadow-lg max-w-[300px] max-h-[90vh] ring-1 ring-gray-200 min-w-[150px]d min-h-[200px] px-0 py-0  ">
+      <p>open: {converItem?.open?.toString()}</p>
       <div className="flex items-center justify-between pr-1">
         <UserItem userId={conver[1]} dnoName="on" fpop={false} par=" -left-5" />
         <div className="flex items-center ">
@@ -131,10 +167,14 @@ function Caption({ userId }) {
   useEffect(() => {
     toolGetDoc("profile", userId, setProfile);
   }, [userId]);
-
   return (
     <div className="text-center flex flex-col items-center text-gray-500 py-4 mb-3">
-      <Avatar src={profile?.photoURL} size={70} className="rounded-full" />
+      <Avatar
+        src={profile?.photoURL}
+        size={70}
+        userName={profile?.userName || profile?.email}
+        className="rounded-full"
+      />
       <p className="font-semibold text-gray-700">{profile?.displayName}</p>
       <small>{profile?.data?.bio}</small>
       {profile?.data?.country && (

@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  input {
+    @apply dark:bg-d3 bg-slate-100;
+  }
+}
+
 html,
 body {
   padding: 0;

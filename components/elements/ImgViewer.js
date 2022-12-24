@@ -1,42 +1,89 @@
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import IconBtn from "./IconBtn";
 
 export default function ImgViewer({ imgs, className }) {
   const [cur, setCur] = useState(0);
   const [open, setOpen] = useState(false);
+  const [src, setSrc] = useState(imgs?.[0]?.url);
+  const vid = useRef();
 
-  const Img = ({ ind = 0, css }) => (
-    <div
-      onClick={(_) => {
-        setCur(ind);
-        setOpen(true);
-      }}
-      className={
-        " cursor-pointer relative rounded-md overflow-hidden m-[2px] flex-1 " +
-        css
-      }
-    >
-      <Image src={imgs?.[ind]?.url} layout="fill" objectFit="cover" />
-    </div>
-  );
+  useEffect(() => {
+    setSrc(imgs?.[cur]?.url);
+    if (vid?.current) {
+      vid.current.src = imgs?.[cur]?.url;
+      vid.current?.play();
+    }
+  }, [cur]);
+
+  const type = (img, vid, ind = cur) =>
+    imgs?.[ind]?.type?.includes("video") ? vid : img;
+
+  const Img = ({ ind = 0, css, autoPlay = true, imgCss, style }) => {
+    return (
+      <div
+        style={style}
+        onClick={(_) => {
+          setCur(ind);
+          setOpen(true);
+        }}
+        className={
+          " cursor-pointer relative overflow-hidden  flex-1 dark:brightness-75 dark:hover:brightness-100   bg-slate-200 dark:bg-slate-600 " +
+          css
+        }
+      >
+        {type(
+          <Image
+            className={
+              "hover:scale-110 object-cover transition duration-[2s] " + imgCss
+            }
+            src={imgs?.[ind]?.url}
+            layout="fill"
+            objectFit="cover"
+          />,
+          <div className="h-full w-full">
+            <video
+              className={"h-[100%] w-[100%] m-auto object-cover  "}
+              muted
+              autoPlay={autoPlay}
+              loop
+            >
+              <source src={imgs?.[ind]?.url} />
+            </video>
+          </div>,
+
+          ind
+        )}
+      </div>
+    );
+  };
 
   const View = () => {
     switch (imgs?.length) {
       case 1:
-        return <Img ind={0} css={"min-h-[270px] p-1 " + className} />;
+        return (
+          <div className={" max-h-[400px] min-h-[400px] " + className}>
+            <Img ind={0} css="max-h-[400px] min-h-[400px]" />
+          </div>
+        );
       case 2:
         return (
-          <div className={"flex min-h-[300px] p-1 " + className}>
+          <div
+            className={
+              " flex gap-[1px] min-h-[300px] max-h-[300px] " + className
+            }
+          >
             <Img ind={0} />
             <Img ind={1} />
           </div>
         );
       case 3:
         return (
-          <div className={"flex flex-col min-h-[350px] p-1 " + className}>
-            <Img ind={0} css="flex-2" />
-            <div className="flex flex-1 ">
+          <div
+            className={"flex flex-col  gap-[1px]  min-h-[350px]  " + className}
+          >
+            <Img ind={0} css="flex-2 min-h-[180px] max-h-[180px]" />
+            <div className="flex flex-1 min-h-[155px] max-h-[155px]  gap-[1px] ">
               <Img ind={1} />
               <Img ind={2} />
             </div>
@@ -44,9 +91,13 @@ export default function ImgViewer({ imgs, className }) {
         );
       case 4:
         return (
-          <div className={"flex min-h-[300px] p-1 " + className}>
+          <div
+            className={
+              "flex min-h-[300px] max-h-[300px]  gap-[1px]  " + className
+            }
+          >
             <Img ind={0} css="flex-1" />
-            <div className="flex flex-col w-[30%]">
+            <div className="flex flex-col w-[35%] gap-[1px] ">
               <Img ind={1} />
               <Img ind={2} />
               <Img ind={3} />
@@ -55,15 +106,17 @@ export default function ImgViewer({ imgs, className }) {
         );
       case 5:
         return (
-          <div className={"flex flex-col min-h-[300px] p-1 " + className}>
-            <div className="flex-1 flex ">
+          <div
+            className={"flex gap-[1px] flex-col min-h-[350px]  " + className}
+          >
+            <div className="flex-1 flex  min-h-[220px] max-h-[220px] gap-[1px] ">
               <Img ind={0} className="flex-1" />
-              <div className="flex flex-col w-[40%]">
+              <div className="flex flex-col w-[40%]  gap-[1px] ">
                 <Img ind={1} />
                 <Img ind={2} />
               </div>
             </div>
-            <div className="flex-1 flex ">
+            <div className="flex-1 flex min-h-[130px] max-h-[130px]  gap-[1px]  ">
               <Img ind={3} />
               <Img ind={4} />
             </div>
@@ -71,15 +124,15 @@ export default function ImgViewer({ imgs, className }) {
         );
       case 6:
         return (
-          <div className={"flex flex-col p-1 " + className}>
-            <div className="flex-1 flex min-h-[270px]">
+          <div className={"flex flex-col   gap-[1px]  " + className}>
+            <div className="flex-1 flex min-h-[220px] max-h-[220px] gap-[1px] ">
               <Img ind={0} className="flex-2" />
-              <div className="flex flex-col w-[40%]">
+              <div className="flex flex-col w-[40%] gap-[1px] ">
                 <Img ind={1} />
                 <Img ind={2} />
               </div>
             </div>
-            <div className="flex-1 flex min-h-[160px]">
+            <div className="flex-1 flex min-h-[120px] max-h-[120px] gap-[1px] ">
               <Img ind={3} />
               <Img ind={4} />
               <Img ind={5} />
@@ -88,25 +141,25 @@ export default function ImgViewer({ imgs, className }) {
         );
       case 7:
         return (
-          <div className={"flex flex-col p-1 " + className}>
-            <div className="flex-1 flex min-h-[270px]">
+          <div className={"flex flex-col  gap-[1px]  " + className}>
+            <div className="flex-1 flex min-h-[230px] max-h-[230px] gap-[1px] ">
               <Img ind={0} className="flex-2" />
-              <div className="flex flex-col w-[40%]">
+              <div className="flex flex-col w-[40%] gap-[1px] ">
                 <Img ind={1} />
                 <Img ind={2} />
               </div>
             </div>
-            <div className="flex-1 flex min-h-[160px]">
+            <div className="flex-1 flex min-h-[120px] max-h-[120px] gap-[1px] ">
               <Img ind={3} />
               <Img ind={4} />
-              <div className="flex-1 m-1 flex relative">
+              <div className="flex-1 flex relative ">
                 <Img ind={5} css="m-0" />
                 <button
                   onClick={(_) => {
                     setCur(5);
                     setOpen(true);
                   }}
-                  className="hover:bg-opacity-30 absolute w-full h-full text-center flex items-center justify-center text-xl text-white font-semibold bg-purple-900 bg-opacity-50"
+                  className="hover:opacity-70d rounded-none hover:bg-opacity-40 absolute w-full h-full text-center flex items-center justify-center text-xl text-white font-semibold bg-pink-800 bg-opacity-30"
                 >
                   +{imgs?.length - 6} More
                 </button>
@@ -121,10 +174,10 @@ export default function ImgViewer({ imgs, className }) {
   };
 
   return (
-    <div>
+    <div className="mt-[1px] ">
       <View />
       {open && (
-        <div className="z-50 backdrop-blur-lg flex flex-col items-centerd justify-center  fixed top-0 left-0 w-full h-full bg-gray-900 overflow-y-auto bg-opacity-80">
+        <div className="z-50 backdrop-blur-lg flex flex-col items-centerd justify-center  fixed top-0 left-0 w-full h-full bg-gray-900 overflow-y-auto bg-opacity-80 ">
           <button
             onClick={(_) => setOpen(false)}
             className="absolute top-0 right-5 text-white font-semibold text-lg hover:font-bold"
@@ -139,8 +192,17 @@ export default function ImgViewer({ imgs, className }) {
             >
               arrow-left-s
             </IconBtn>
-            <div className="flex-1 h-[100%] px-5 justify-center flex">
-              <img src={imgs?.[cur]?.url} className="h-[100%] shadow-lg" />
+            <div className="flex-1 h-[100%] px-5 justify-center flex relative">
+              {type(
+                <Image
+                  src={imgs?.[cur]?.url}
+                  objectFit="contain"
+                  layout="fill"
+                />,
+                <video ref={vid} autoPlay loop controls>
+                  <source src={src} />
+                </video>
+              )}
             </div>
             <IconBtn
               onClick={(_) =>
@@ -150,15 +212,22 @@ export default function ImgViewer({ imgs, className }) {
               arrow-right-s
             </IconBtn>
           </div>
-          <div className="flex overflow-x-auto w-full justify-center items-center p-2">
+          <div className="flex overflow-x-auto w-[90%] mx-auto justify-center items-center ">
             {imgs?.map((img, ind) => (
               <div
                 className={
                   "flex rounded-md m-1 min-w-[100px] min-h-[100px] " +
                   (ind == cur && "ring-white ring-2")
                 }
+                key={ind}
               >
-                <Img ind={ind} css="m-0" />
+                <Img
+                  ind={ind}
+                  css=" m-0 max-w-[100px] max-h-[100px] bg-cover object-cover "
+                  loop
+                  autoPlay={true}
+                  imgCss="object-fill bg-cover"
+                />
               </div>
             ))}
           </div>

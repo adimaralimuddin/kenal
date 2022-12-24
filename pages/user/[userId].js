@@ -1,17 +1,18 @@
 import MainUserPage from "../../components/main/MainUserPage";
+import MainLayout from "../../components/main/MainLayout";
 
-
-
-export default function UserId({params}) {
+export default function UserId({ params }) {
   return (
-    <MainUserPage params={params}/>
-  )
+    <MainLayout>
+      <MainUserPage params={params} />
+    </MainLayout>
+  );
 }
 
 export async function getServerSideProps(context) {
-    return {
-        props: {
-            params:context?.params
-        }
-    }
+  return {
+    props: {
+      params: context?.params,
+    },
+  };
 }

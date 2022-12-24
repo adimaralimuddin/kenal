@@ -1,9 +1,11 @@
 import MainHeader from "./MainHeader";
 
-export default function MainLayout({ children }) {
+export default function MainLayout({ children, className, headerCss }) {
   return (
-    <div className="bg-[#F7F8F9]d min-h-[100vh]">
-      <MainHeader />
+    <div
+      className={" min-h-[100vh] overflow-hidden flex flex-col " + className}
+    >
+      <MainHeader className={headerCss} />
       {children}
     </div>
   );

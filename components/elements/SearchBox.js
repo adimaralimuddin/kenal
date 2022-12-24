@@ -3,7 +3,7 @@ import Icon from "./Icon";
 function SearchBox({ placeHolder, className, onChange, autoFocus, onInput }) {
   return (
     <div className={"flex items-center " + className}>
-      <div className="flex items-center bg-gray-100 rounded-md px-2 flex-1">
+      <div className="flex items-center bg-slate-100 dark:bg-slate-700 rounded-md px-2 flex-1">
         <Icon>search</Icon>
         <input
           onChange={(e) => onChange?.(e.target.value, e)}

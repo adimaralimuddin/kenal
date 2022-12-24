@@ -1,4 +1,3 @@
-
 import useUser from "./useUser";
 import create from "zustand";
 import toolUpdatedoc from "./toolUpdateDoc";
@@ -13,8 +12,8 @@ export default function useProfile() {
   const store = store_();
   const { set, data } = store;
 
-  function update() {
-    toolUpdatedoc("profile", user?.uid, { data });
+  async function update() {
+    await toolUpdatedoc("profile", user?.uid, { data });
   }
 
   return {

@@ -5,7 +5,6 @@ export default function postDetail({ postId }) {
 }
 
 export function getServerSideProps(context) {
-  console.log(context.params);
   return {
     props: {
       postId: context?.params?.postId,

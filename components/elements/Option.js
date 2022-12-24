@@ -1,57 +1,82 @@
-import { useState } from "react";
+import useUser from "../../controls/useUser";
+import Comp from "../main/Comp";
+import { useAlert } from "./Alert";
 import Box from "./Box";
 import Icon from "./Icon";
 
-export default function Option({
+const Option = ({
   icon = "more",
+  iconClass,
   options,
   className,
   userId,
-  authId,
-}) {
-  const [open, setOpen] = useState(false);
+  par,
+  rightText,
+  iconActive = "on",
+  state,
+  onlyUser = false,
+}) => {
+  const { user } = useUser();
+  const { open } = useAlert();
 
   if (options?.length <= 0) {
     return null;
   }
 
   return (
-    <div className={" whitespace-nowrap " + className}>
+    <div className={" whitespace-nowrap flex " + className}>
       {options?.length > 0 && (
-        <button className="p-0 m-0" onClick={(_) => setOpen(true)}>
+        <button
+          className="p-0 m-0 "
+          onClick={(_) => {
+            if (onlyUser && !user) {
+              return open("you must signin to see options.");
+            }
+            if (state.open) {
+              state.set({ open: false });
+            } else {
+              state.set({ open: true });
+            }
+          }}
+        >
           <Icon
-            active="on"
-            className=" text-gray-400 text-md text-[20px] ring-d rounded-full p-1 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-gray-600"
+            active={iconActive}
+            className={
+              " text-gray-400 text-md px-2 text-[20px] rounded-full p-1 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-d2 " +
+              iconClass
+            }
           >
             {icon}
           </Icon>
+          {rightText}
         </button>
       )}
-      <i className="fa-regular fa-ellipsis"></i>
-      <i className="fa-regular fa-ellipsis"></i>
-      {open && (
+      {state?.open && (
         <span className="relative">
           <div
-            onMouseLeave={(_) => setOpen(false)}
-            className="absolute z-50 top-0 right-0 p-2"
+            onMouseLeave={() => state.set({ open: false })}
+            className={"absolute z-50 top-0 right-0 p-2  " + par}
+            onClick={() => state.set({ open: false })}
           >
-            <Box className="transition duration-500 ring-1 ring-gray-100 flex-col flex z-50 bg-white dark:bg-slate-600  shadow-md p-0 py-2 overflow-hidden text-gray-500 dark:ring-slate-500 dark:ring-2">
+            <Box className="animate-pop transition duration-200 ring-1 ring-gray-100 flex-col flex z-50 bg-white dark:bg-d2  shadow-md p-0 py-2 overflow-hidden text-gray-500 dark:ring-slate-500 dark:ring-0 ">
               {options?.map((option) => {
-                if (option?.secure && authId !== userId) {
+                if (option?.secure && user?.uid !== userId) {
                   return null;
                 }
                 return (
                   <span
                     onClick={(_) => {
                       option?.action();
-                      setOpen(false);
+                      state.set({ open: false });
                     }}
                     className=" flex items-center justify-betweend flex-1 text-center cursor-pointer
-                     hover:text-gray-600 p-3 dark:hover:text-gray-200 hover:bg-slate-100 dark:hover:bg-slate-500 px-2 min-w-[140px] rounded-md"
+                     hover:text-gray-600 p-3 dark:hover:text-gray-200 hover:bg-slate-100 dark:hover:bg-d3 px-2 min-w-[140px] rounded-md"
                     key={Math.random()}
                   >
                     <Icon className=" min-w-[20px]">{option?.icon}</Icon>
-                    <small className="mx-3 font-semibold">{option?.text}</small>
+                    <small className="mx-3 font-semibold">
+                      {option?.text?.replace("_", " ")}
+                    </small>
                   </span>
                 );
               })}
@@ -61,4 +86,6 @@ export default function Option({
       )}
     </div>
   );
-}
+};
+
+export default Comp(Option, { open: false });

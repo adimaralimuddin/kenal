@@ -1,5 +1,4 @@
 import {
-  addDoc,
   arrayUnion,
   collection,
   doc,
@@ -12,12 +11,12 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase.config";
 import useSettings from "./useSettings";
-import toolAdddoc from "./toolAddDoc";
 import toolUpdatedoc from "./toolUpdateDoc";
 import toolGetDoc from "./toolGetDoc";
 
 export default function useNotifs() {
   const { settings, getUserSettings } = useSettings();
+
   function listen(userId, caller) {
     if (!userId) return;
     const q = query(
@@ -33,13 +32,18 @@ export default function useNotifs() {
   }
 
   async function addNotif(to, from, type, docId, ref) {
-    const data = { to, from, type, docId, url: "post" };
+    const data = { to, from, type, docId, url: "post/" + docId };
     if (ref) {
       data.ref = ref;
     }
     switch (type) {
+      case "chat":
+        data.message = "has chatted you.";
+        data.notif = "chatNotif";
+        break;
       case "sendReq":
         data.message = "you have a new friend request";
+        data.url = "user/" + from;
         break;
       case "like-post": // post
         data.message = "liked your posts";
@@ -111,23 +115,25 @@ export default function useNotifs() {
         data.message = "started following you";
         data.notif = "notiffollow";
         data.post = "user";
+        data.url = "user/" + from;
         break;
       case "unfollow":
         data.message = "just unfollowed you";
         data.notif = "notifunfollow";
         data.post = "user";
+        data.url = "user/" + from;
         break;
       default:
         break;
     }
-    console.log({ data });
     const userSettings = await getUserSettings(to);
+
     if (
       userSettings?.[data?.notif] &&
       !userSettings?.[data?.notif + "list"]?.find((p) => p == from)
     ) {
       const id = docId + type.replace("-", "");
-      const gotNotif = await toolGetDoc("notifs", id);
+      // const gotNotif = await toolGetDoc("notifs", id);
       const payLoad = {
         ...data,
         lists: arrayUnion(from),
@@ -139,7 +145,7 @@ export default function useNotifs() {
     } else {
       console.log("notif post is blocked");
     }
-  }
+  } // end of add notif
 
   function seen(docId) {
     toolUpdatedoc("notifs", docId, { seen: true });
