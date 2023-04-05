@@ -1,12 +1,12 @@
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import Droper from "../elements/Droper";
-import toolGetDoc from "../../controls/toolGetDoc";
 import Link from "next/link";
-import RelationAction from "../reactions/RelationAction";
+import { useEffect, useState } from "react";
+import toolGetDoc from "../../controls/toolGetDoc";
+import useRelations from "../../controls/useRelations";
 import useSettings from "../../controls/useSettings";
 import useUser from "../../controls/useUser";
-import useRelations from "../../controls/useRelations";
+import Droper from "../elements/Droper";
+import RelationAction from "../reactions/RelationAction";
 import UserRelationsCaption from "../user/UserRelationsCaption";
 function UserInfoPop({ open, set, par, div, data, userId, show }) {
   const { user } = useUser();
@@ -52,7 +52,7 @@ function UserInfoPop({ open, set, par, div, data, userId, show }) {
       set={set}
       par={"  " + par}
       div={
-        "flex flex-col p-0 py-0 px-0 overflow-hidden rounded-xl w-full ring-1 " +
+        "flex pb-2 flex-col p-0 py-0 px-0 overflow-hidden rounded-xl w-full ring-1 " +
         div
       }
       divProps={{
@@ -73,18 +73,18 @@ function UserInfoPop({ open, set, par, div, data, userId, show }) {
       <Link href={`user/${userId}`}>
         <div className=" cursor-pointer hover:underline flex flex-1  w-[300px] pb-2">
           <div className="bg-[url('/img/storybg1.webp')] bg-center bg-cover flex ml-5 ring-[4px] ring-white -mt-6 relative min-h-[80px] max-h-[80px] max-w-[80px] min-w-[80px] rounded-full overflow-hidden hover:scale-125 transition">
-            {data?.avatar && (
+            {data?.photoURL && (
               <Image
-                src={data?.avatar}
+                src={data?.photoURL}
                 width={80}
                 height={80}
-                objectFit="contain"
+                objectFit="cover"
               />
             )}
           </div>
           <div className="px-2 pt-1">
             <h3 className=" text-gray-500 dark:text-gray-400 ">
-              {data?.userName}
+              {data?.displayName}
             </h3>
             <p className=" text-md text-gray-400 dark:text-gray-500 -mt-1">
               {profile?.data?.bio}

@@ -9,15 +9,15 @@ import {
 } from "firebase/firestore";
 import create from "zustand";
 import { db } from "../firebase.config";
+import { isFollowing } from "../tools/toolRelations";
 import toolGetDocs from "./toolGetDocs";
 import toolPostAdder from "./toolPostAdder";
 import toolRemoveDoc from "./toolRemoveDoc";
 import toolRemoveFile from "./toolRemoveFile";
 import toolUpdatedoc from "./toolUpdateDoc";
+import useRelations from "./useRelations";
 import useSettings from "./useSettings";
 import useUser from "./useUser";
-import useRelations from "./useRelations";
-import { isFollowing } from "../tools/toolRelations";
 
 const store_ = create((set) => ({
   body: "",
@@ -144,13 +144,13 @@ export default function usePost() {
         });
         snap.docChanges().forEach((change) => {
           if (change.type === "added") {
-            console.log("New city: ", change.doc.data());
+            // console.log("New city: ", change.doc.data());
           }
           if (change.type === "modified") {
-            console.log("Modified city: ", change.doc.data());
+            // console.log("Modified city: ", change.doc.data());
           }
           if (change.type === "removed") {
-            console.log("Removed city: ", change.doc.data());
+            // console.log("Removed city: ", change.doc.data());
           }
         });
         return { posts: [...x, ...posts], lastPost };

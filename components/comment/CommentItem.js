@@ -88,6 +88,7 @@ function CommentItem({ data, onDelete, onUpdate, state, par }) {
 
   return (
     <div
+      id={data?.id}
       onMouseEnter={(_) => setActive(true)}
       onMouseLeave={(_) => setActive(false)}
       className="ring-1d p-0 m-0"
@@ -108,7 +109,7 @@ function CommentItem({ data, onDelete, onUpdate, state, par }) {
             className="px-0 py-0"
           />
         </div>
-        <div className="pt-2 px-1 w-full pl-4">
+        <div className="pt-4 px-1 w-full pl-4">
           <div className="flex">
             <PostBody
               header={
@@ -118,7 +119,7 @@ function CommentItem({ data, onDelete, onUpdate, state, par }) {
                   className="ring-1d my-0 py-0 "
                 />
               }
-              className=" bg-slate-200 dark:bg-d1 dark:text-slate-400"
+              className=" bg-slate-100 dark:bg-d1 dark:text-slate-400"
               body={data?.body}
             >
               {viewEdit && (

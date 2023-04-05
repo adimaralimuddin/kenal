@@ -10,7 +10,7 @@ export default function LikeMain({
   col_,
   size,
   className,
-  likeActiveStyle = "text-indigo-300",
+  likeActiveStyle = " text-indigo-300 dark:indigo-400 ",
   loveActiveStyle = "text-pink-300",
   likeFill,
   loveFill,
@@ -42,34 +42,69 @@ export default function LikeMain({
     return openAlert(`Please signin to ${val} this post.`);
   }
 
+  function onLikeHandler() {
+    if (!user) {
+      return alertNoUser();
+    }
+    console.log("data", data);
+    like({
+      docId: data?.id,
+      authId: user?.uid,
+      likes: data?.likes,
+      col_,
+      docUserId: Array.isArray(data?.userId) ? data?.userId?.[0] : data?.userId,
+      postId: data?.postId,
+      text: data?.body,
+    });
+    // like(
+    //   data?.id,
+    //   user?.uid,
+    //   data?.likes,
+    //   col_,
+    //   Array.isArray(data?.userId) ? data?.userId?.[0] : data?.userId
+    // );
+  }
+
+  function onLoveHandler() {
+    if (!user) {
+      return alertNoUser("love");
+    }
+    console.log("love postidata", data);
+    love({
+      docId: data?.id,
+      authId: user?.uid,
+      loves: data?.loves,
+      col_,
+      docUserId: Array.isArray(data?.userId) ? data?.userId?.[0] : data?.userId,
+      postId: data?.postId,
+      text: data?.body,
+    });
+    // love(
+    //   data?.id,
+    //   user?.uid,
+    //   data?.loves,
+    //   col_,
+    //   Array.isArray(data?.userId) ? data?.userId?.[0] : data?.userId
+    // );
+  }
+
   return (
     <div className={" flex items-center text-gray-500 max-w-min " + className}>
       <div
-        onMouseEnter={(_) => {
+        onMouseEnter={() => {
           setOpen(false);
           setShow(true);
         }}
-        onMouseLeave={(_) => {
+        onMouseLeave={() => {
           setShow(false);
           setOpen(false);
         }}
       >
         <button
           onMouseEnter={openLike}
-          onMouseLeave={(_) => setOpen(false)}
+          onMouseLeave={() => setOpen(false)}
           className="flex items-center min-w-[50px] py-0 my-0"
-          onClick={(_) => {
-            if (!user) {
-              return alertNoUser();
-            }
-            like(
-              data?.id,
-              user?.uid,
-              data?.likes,
-              col_,
-              Array.isArray(data?.userId) ? data?.userId?.[0] : data?.userId
-            );
-          }}
+          onClick={onLikeHandler}
         >
           <UsersListPop
             show={show}
@@ -107,20 +142,7 @@ export default function LikeMain({
           onMouseEnter={openLove}
           onMouseLeave={(_) => setOpenL(false)}
           className="flex items-center min-w-[50px] py-0 my-0"
-          onClick={(_) => {
-            if (!user) {
-              return alertNoUser("love");
-            }
-            love(
-              data?.id,
-              user?.uid,
-              data?.loves,
-              col_,
-              // data?.userId?.[0] || data?.userId
-              Array.isArray(data?.userId) ? data?.userId?.[0] : data?.userId
-              // Array.isArray(data?.userId) ? data?.userId?.[0] : data?.userId
-            );
-          }}
+          onClick={onLoveHandler}
         >
           <UsersListPop
             show={showL}

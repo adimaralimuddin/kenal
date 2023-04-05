@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import useChat from "../../controls/useChat";
+import ChatPopItem from "./ChatPopItem";
 import ConverItem from "./ConverItem";
 import ConverMin from "./ConverMin";
 

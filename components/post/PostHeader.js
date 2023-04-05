@@ -59,7 +59,7 @@ export default function Header({ data, state, removePost }) {
     <div
       onMouseLeave={(_) => setActive(false)}
       onMouseEnter={(_) => setActive(true)}
-      className="flex justify-between items-start p-2 "
+      className="flex justify-between items-start p-2  "
     >
       <div className="flex items-center">
         <UserItem

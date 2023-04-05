@@ -14,7 +14,7 @@ import StoryItemViewer from "./StoryItemViewer";
 
 export default function StoryMain() {
   const { loadFirst, stories, fetchNext } = useStory();
-  const {user} = useUser()
+  const { user } = useUser();
   const [ind, setInd] = useState(0);
   const [open, setOpen] = useState(false);
   const story = () => stories?.[ind];
@@ -23,7 +23,7 @@ export default function StoryMain() {
 
   useEffect(() => {
     loadFirst();
-  }, [settings,user]);
+  }, [settings, user]);
 
   const forward = () => {
     if (ind >= stories?.length - 1) {
@@ -58,7 +58,7 @@ export default function StoryMain() {
     setInd(0);
   }
   return (
-    <div className="flex flex-1 max-h-[190px]d min-h-[150px] ">
+    <div className="flex flex-1  min-h-[180px] ">
       <StoryVisible
         ind={ind}
         onItemOpenHandler={onItemOpenHandler}
@@ -107,7 +107,7 @@ function StoryVisible({ ind = 0, onItemOpenHandler, seeMorehandler }) {
   const { stories, removeStory } = useStory();
   return (
     <>
-      <div className="flex-1 w-[90vw] flex overflow-x-auto py-2  ">
+      <div className="flex-1  flex overflow-x-auto gap-3  ">
         <StoryAdder />
         {stories?.map((story, ind) => (
           <StoryItem
@@ -124,7 +124,7 @@ function StoryVisible({ ind = 0, onItemOpenHandler, seeMorehandler }) {
           <Icon
             onClick={seeMorehandler}
             className={
-              "hover:scale-125 transition shadow-md cursor-pointer text-white bg-gradient-to-r from-pink-400 to-pink-300 bg-pink-300 dark:bg-pink-400  hover:bg-pink-400 dark:hover:bg-pink-500 ring-[3px] ring-white p-2 rounded-full text-2xl w-[43px] h-[43px] text-center dark:text-white"
+              "hover:scale-125 transition shadow-md cursor-pointer text-white bg-gradient-to-r  bg-primary-light dark:bg-pink-400  hover:bg-pink-400 dark:hover:bg-pink-500 ring-[3px] ring-white p-2 rounded-full text-2xl w-[43px] h-[43px] text-center dark:text-white"
             }
           >
             arrow-right

@@ -1,6 +1,3 @@
-import useUser from "./useUser";
-import toolUpdateDoc from "./toolUpdateDoc";
-import toolGetDocs from "./toolGetDocs";
 import {
   arrayRemove,
   arrayUnion,
@@ -9,9 +6,12 @@ import {
   onSnapshot,
   where,
 } from "firebase/firestore";
-import { db } from "../firebase.config";
 import create from "zustand";
+import { db } from "../firebase.config";
 import toolGetDoc from "./toolGetDoc";
+import toolGetDocs from "./toolGetDocs";
+import toolUpdateDoc from "./toolUpdateDoc";
+import useUser from "./useUser";
 
 const store_ = create((set) => ({
   settings: null,
@@ -44,6 +44,7 @@ export default function useSettings() {
   }
 
   async function getUserSettings(userId) {
+    if (!userId) return null;
     return await toolGetDoc("settings", userId);
   }
 

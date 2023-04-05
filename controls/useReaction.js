@@ -2,61 +2,87 @@ import { toolArrayRemove, toolArrayUnion } from "./toolArrayDb";
 import useNotifs from "./useNotifs";
 
 export default function useReaction() {
-  const { addNotif } = useNotifs();
-  async function like(docId, authId, likes, col_, docUserId) {
-    console.log("to ", docUserId);
-    function preAddNotif(field) {
+  const { addNotif, notify } = useNotifs();
+
+  // docId, authId, likes, col_, docUserId
+  async function like({ docId, authId, likes, col_, docUserId, postId, text }) {
+    function createLikeNotif(type, subtype) {
       if (docUserId !== authId) {
-        addNotif(docUserId, authId, field, docId);
+        notify({
+          docId: postId,
+          to: docUserId,
+          from: authId,
+          subtype,
+          type,
+          actionId: docId,
+          notif: "react",
+          text,
+          id: docId + "like",
+        });
       }
     }
 
     if (likes?.find((i) => i == authId)) {
       toolArrayRemove(col_, docId, "likes", authId);
       if (col_ == "comments") {
-        preAddNotif("unlike-comment");
+        createLikeNotif("comment", "unlike");
       } else if (col_ == "replies") {
-        preAddNotif("unlike-reply");
+        createLikeNotif("reply", "unlike");
       } else {
-        preAddNotif("unlike-post");
+        createLikeNotif("post", "unlike");
       }
     } else {
       toolArrayUnion(col_, docId, "likes", authId);
       if (col_ == "comments") {
-        preAddNotif("like-comment");
+        createLikeNotif("comment", "like");
       } else if (col_ == "replies") {
-        preAddNotif("like-reply");
+        createLikeNotif("reply", "like");
       } else {
-        preAddNotif("like-post");
+        createLikeNotif("post", "like");
       }
     }
   }
 
-  async function love(docId, authId, loves, col_, docUserId) {
-    console.log("to ", docUserId);
-
-    function preAddNotif(field) {
+  // docId, authId, loves, col_, docUserId
+  async function love({ docId, authId, loves, col_, docUserId, postId, text }) {
+    function createLoveNotif(type, subtype) {
+      console.log("loves", loves);
+      console.log(
+        "isloved",
+        loves?.find((i) => i == authId)
+      );
       if (docUserId !== authId) {
-        addNotif(docUserId, authId, field, docId);
+        // addNotif(docUserId, authId, subtype, docId);
+        notify({
+          docId: postId,
+          to: docUserId,
+          from: authId,
+          subtype,
+          type,
+          actionId: docId,
+          notif: "react",
+          text,
+          id: docId + "love",
+        });
       }
     }
     if (loves?.find((i) => i == authId)) {
       toolArrayRemove(col_, docId, "loves", authId);
       if (col_ == "comments") {
-        preAddNotif("unlove-comment");
+        createLoveNotif("comment", "unlove");
       } else if (col_ == "replies") {
-        preAddNotif("unlove-reply");
+        createLoveNotif("reply", "unlove");
       } else {
-        preAddNotif("unlove-post");
+        createLoveNotif("post", "unlove");
       }
     } else {
       toolArrayUnion(col_, docId, "loves", authId);
       if (col_ == "comments") {
-        preAddNotif("love-comment");
+        createLoveNotif("comment", "love");
       } else if (col_ == "replies") {
-        preAddNotif("love-reply");
+        createLoveNotif("reply", "love");
       } else {
-        preAddNotif("love-post");
+        createLoveNotif("post", "love");
       }
     }
   }

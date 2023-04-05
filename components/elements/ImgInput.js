@@ -40,7 +40,7 @@ export default function ImgInput({
   }
 
   return (
-    <div className="cursor-pointer" onClick={reclick}>
+    <div className="cursor-pointer  " onClick={reclick}>
       <input
         ref={ref}
         hidden

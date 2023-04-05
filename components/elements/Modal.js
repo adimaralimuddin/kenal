@@ -1,6 +1,15 @@
+import { useEffect } from "react";
 import IconBtn from "./IconBtn";
 
 export default function Modal({ open, set, children, div, className }) {
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflowY = "hidden";
+    }
+    return () => {
+      document.body.style.overflowY = "auto";
+    };
+  }, []);
   if (!open) return null;
   return (
     <div
@@ -12,11 +21,16 @@ export default function Modal({ open, set, children, div, className }) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className={" relative animate-pop " + div}
+        className={
+          " relative  flex flex-col animate-pop w-full h-full max-w-xl max-h-[350px] p-2 " +
+          div
+        }
       >
         <IconBtn
-          onClick={(_) => set(false)}
-          className="absolute -top-5 right-2"
+          onClick={(_) => {
+            set(false);
+          }}
+          className="absolute -top-5 right-2 text-xl w-[35px] h-[35px] text-center font-bold ring-2 ring-slate-200 dark:ring-slate-800"
         >
           close
         </IconBtn>

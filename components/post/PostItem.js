@@ -1,17 +1,17 @@
-import Box from "../elements/Box";
-import usePost from "../../controls/usePost";
-import ImgViewer from "../elements/ImgViewer";
-import CommentMain from "../comment/CommentMain";
-import LikeMain from "../reactions/LikeMain";
-import PostEditorMain from "../postEditor/PostEditorMain";
 import { useEffect } from "react";
-import EditHist from "../elements/EditHist";
+import usePost from "../../controls/usePost";
 import useRelations from "../../controls/useRelations";
 import useSettings from "../../controls/useSettings";
+import CommentMain from "../comment/CommentMain";
+import { useAlert } from "../elements/Alert";
+import Box from "../elements/Box";
+import EditHist from "../elements/EditHist";
+import ImgViewer from "../elements/ImgViewer";
 import Comp from "../main/Comp";
+import PostEditorMain from "../postEditor/PostEditorMain";
+import LikeMain from "../reactions/LikeMain";
 import PostBodyStyle from "./PostBodyStyle";
 import PostHeader from "./PostHeader";
-import { useAlert } from "../elements/Alert";
 
 const PostItem = ({ data, state }) => {
   const { removePost, updatePost, set, postPrivacyCheck } = usePost();
@@ -59,7 +59,7 @@ const PostItem = ({ data, state }) => {
   };
 
   return (
-    <Box className="animate-pop duration-500 flex flex-col text-gray-500 min-h-[300px] my-5 mx-0 px-0 py-0 shadow-sm ring-[1px] ring-slate-200">
+    <div className="box box-ring animate-pop duration-500 pb-1 flex flex-col min-h-[300px]  mx-0 px-0 py-0 ">
       <PostHeader data={data} state={state} removePost={removePost} />
       <PostBodyStyle data={data} />
       <EditHist show={state?.viewEdit} data={data} className="text-sm px-2" />
@@ -87,7 +87,7 @@ const PostItem = ({ data, state }) => {
         postUserId={data?.userId?.[0]}
         hookComments={(hookComments) => set({ hookComments })}
       />
-    </Box>
+    </div>
   );
 };
 

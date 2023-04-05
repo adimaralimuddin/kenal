@@ -1,15 +1,15 @@
 import { doc, onSnapshot } from "firebase/firestore";
+import create from "zustand";
 import { db } from "../firebase.config";
-import { toolArrayUnion, toolArrayRemove } from "./toolArrayDb";
+import { toolArrayRemove, toolArrayUnion } from "./toolArrayDb";
 import toolGetDoc from "./toolGetDoc";
 import useNotifs from "./useNotifs";
-import create from "zustand";
 import useUser from "./useUser";
 
 const store_ = create((set) => ({ set: (data) => set(data) }));
 
 export default function useRelations() {
-  const { addNotif } = useNotifs();
+  const { addNotif, notify } = useNotifs();
   const store = store_();
   const { set, relations } = store;
   const { user } = useUser();
@@ -33,11 +33,27 @@ export default function useRelations() {
     if (rel?.followers?.find((x) => x == by)) {
       toolArrayRemove("relations", by, "followings", to);
       toolArrayRemove("relations", to, "followers", by);
-      addNotif(to, by, "unfollow", to);
+      notify({
+        to,
+        from: by,
+        docId: to,
+        type: "profile",
+        subtype: "unfollow",
+        notif: "follow",
+      });
+      // addNotif(to, by, "unfollow", to);
     } else {
       toolArrayUnion("relations", by, "followings", to);
       toolArrayUnion("relations", to, "followers", by);
-      addNotif(to, by, "follow", to);
+      // addNotif(to, by, "follow", to);
+      notify({
+        to,
+        from: by,
+        docId: to,
+        type: "profile",
+        subtype: "follow",
+        notif: "follow",
+      });
     }
   }
 
@@ -110,7 +126,6 @@ export default function useRelations() {
   }
 
   function checkChatPrivacy(userId, relation, userSettings) {
-    
     if (userSettings?.blockedchats?.find((p) => p == user?.uid)) {
       return false;
     }

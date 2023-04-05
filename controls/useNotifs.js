@@ -9,151 +9,99 @@ import {
   setDoc,
   where,
 } from "firebase/firestore";
+import create from "zustand";
 import { db } from "../firebase.config";
-import useSettings from "./useSettings";
+import toolRemoveDoc from "./toolRemoveDoc";
 import toolUpdatedoc from "./toolUpdateDoc";
-import toolGetDoc from "./toolGetDoc";
+import useSettings from "./useSettings";
+import useUser from "./useUser";
 
+export const NotifStore = create((set) => ({ set }));
 export default function useNotifs() {
-  const { settings, getUserSettings } = useSettings();
+  const { getUserSettings } = useSettings();
+  const store = NotifStore();
+  const { user } = useUser();
 
-  function listen(userId, caller) {
+  function listen(caller) {
+    const userId = user?.uid;
     if (!userId) return;
     const q = query(
       collection(db, "notifs"),
       where("to", "==", userId),
+      // where(),
       orderBy("timestamp", "desc")
     );
     return onSnapshot(q, (snap) => {
       const notifs = snap?.docs?.map((d) => ({ ...d.data(), id: d.id }));
-      // console.log("snpas ", notifs);
+      store.set({ notifs });
       caller?.(notifs);
     });
   }
 
-  async function addNotif(to, from, type, docId, ref) {
-    const data = { to, from, type, docId, url: "post/" + docId };
-    if (ref) {
-      data.ref = ref;
-    }
-    switch (type) {
-      case "chat":
-        data.message = "has chatted you.";
-        data.notif = "chatNotif";
-        break;
-      case "sendReq":
-        data.message = "you have a new friend request";
-        data.url = "user/" + from;
-        break;
-      case "like-post": // post
-        data.message = "liked your posts";
-        data.notif = "notifreactpost";
-        break;
-      case "unlike-post":
-        data.message = "disliked your posts";
-        data.notif = "notifreactpost";
-        break;
-      case "love-post":
-        data.message = "loved your posts";
-        data.notif = "notifreactpost";
-        break;
-      case "unlove-post":
-        data.message = "unloved your posts";
-        data.notif = "notifreactpost";
-        break;
-
-      case "comment-post":
-        data.message = "commented on your post";
-        data.notif = "notifcommentpost";
-        break;
-      //-------------------------------------------------- comment
-      case "like-comment":
-        data.message = "liked your comment";
-        data.notif = "notifreactcomment";
-        break;
-      case "unlike-comment":
-        data.message = "unliked your comment";
-        data.notif = "notifreactcomment";
-        break;
-      case "love-comment":
-        data.message = "loved your comment";
-        data.notif = "notifreactcomment";
-        break;
-      case "unlove-comment":
-        data.message = "unloved your comment";
-        data.notif = "notifreactcomment";
-        break;
-      case "reply-comment":
-        data.message = "replied on your comment";
-        data.notif = "notifreplycomment";
-        break;
-      //-------------------------------------------------- reply
-      case "like-reply":
-        data.message = "liked your reply";
-        data.notif = "notifreactreply";
-        break;
-      case "unlike-reply":
-        data.message = "unliked your reply";
-        data.notif = "notifreactreply";
-        break;
-      case "love-reply":
-        data.message = "loved your reply";
-        data.notif = "notifreactreply";
-        break;
-      case "unlove-reply":
-        data.message = "unloved your reply";
-        data.notif = "notifreactreply";
-        break;
-      //--------------------------------------------------mention
-      case "mention":
-        data.message = "mentioned you on a reply";
-        data.notif = "notifmention";
-        data.post = "user";
-        break;
-      //-------------------------------------------------relations
-      case "follow":
-        data.message = "started following you";
-        data.notif = "notiffollow";
-        data.post = "user";
-        data.url = "user/" + from;
-        break;
-      case "unfollow":
-        data.message = "just unfollowed you";
-        data.notif = "notifunfollow";
-        data.post = "user";
-        data.url = "user/" + from;
-        break;
-      default:
-        break;
-    }
+  async function notify({
+    to,
+    from,
+    type,
+    subtype,
+    docId,
+    msg = "",
+    notif,
+    ...others
+  }) {
     const userSettings = await getUserSettings(to);
-
+    const notifSetting = "notif" + notif + type;
     if (
-      userSettings?.[data?.notif] &&
-      !userSettings?.[data?.notif + "list"]?.find((p) => p == from)
+      userSettings?.[notifSetting] &&
+      !userSettings?.[notifSetting + "list"]?.find((p) => p == from)
     ) {
-      const id = docId + type.replace("-", "");
-      // const gotNotif = await toolGetDoc("notifs", id);
+      const data = { to, from, type, docId, msg, notif, subtype };
+
       const payLoad = {
+        ...others,
         ...data,
         lists: arrayUnion(from),
         seen: false,
         timestamp: serverTimestamp(),
       };
+      if (!payLoad?.id) {
+        payLoad.id = docId + type;
+      }
+      console.log("playload", payLoad);
 
-      setDoc(doc(db, "notifs", id), payLoad, { merge: true });
+      const result = await setDoc(doc(db, "notifs", payLoad.id), payLoad, {
+        merge: true,
+      });
     } else {
       console.log("notif post is blocked");
     }
-  } // end of add notif
+  }
+
+  function updateNotif({ notifId, data }) {
+    toolUpdatedoc("notifs", notifId, data, (done) => {
+      console.log("notif updated");
+    });
+  }
 
   function seen(docId) {
     toolUpdatedoc("notifs", docId, { seen: true });
   }
 
+  function getNotifBadge() {
+    return store?.notifs?.filter?.((p) => !p.seen)?.length;
+  }
+
+  async function deleteNotif(notifId) {
+    const deletedResult = await toolRemoveDoc("notifs", notifId);
+    return deletedResult;
+  }
+
   return {
-    addNotif,
+    ...store,
     listen,
     seen,
+    notify,
+    getNotifBadge,
+    deleteNotif,
+    updateNotif,
   };
 }

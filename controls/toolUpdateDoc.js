@@ -18,7 +18,7 @@ export default async function toolUpdatedoc(
   try {
     const { images, imgLength, ...postData } = data;
 
-    await updateDoc(doc(db, col_, docId), {
+   const result= await updateDoc(doc(db, col_, docId), {
       ...postData,
       updatedAt: serverTimestamp(),
     });

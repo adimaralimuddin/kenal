@@ -24,10 +24,10 @@ const Option = ({
   }
 
   return (
-    <div className={" whitespace-nowrap flex " + className}>
+    <div className={" whitespace-nowrap flex flex-1   " + className}>
       {options?.length > 0 && (
         <button
-          className="p-0 m-0 "
+          className="p-0d m-0 p-[2px] flex flex-1 justify-center "
           onClick={(_) => {
             if (onlyUser && !user) {
               return open("you must signin to see options.");
@@ -42,13 +42,13 @@ const Option = ({
           <Icon
             active={iconActive}
             className={
-              " text-gray-400 text-md px-2 text-[20px] rounded-full p-1 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-d2 " +
+              " text-gray-400 w-[30px] h-[30px] ring-0 text-md px-2d text-[20px] rounded-full aspect-square p-1d hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-d2  " +
               iconClass
             }
           >
             {icon}
           </Icon>
-          {rightText}
+          <span className="px-1 ">{rightText}</span>
         </button>
       )}
       {state?.open && (
@@ -58,7 +58,7 @@ const Option = ({
             className={"absolute z-50 top-0 right-0 p-2  " + par}
             onClick={() => state.set({ open: false })}
           >
-            <Box className="animate-pop transition duration-200 ring-1 ring-gray-100 flex-col flex z-50 bg-white dark:bg-d2  shadow-md p-0 py-2 overflow-hidden text-gray-500 dark:ring-slate-500 dark:ring-0 ">
+            <Box className="animate-pop  transition duration-200 ring-1 ring-gray-100 flex-col flex z-50 bg-white dark:bg-d2  shadow-md p-0 py-2 overflow-hidden text-gray-500 dark:ring-slate-500 dark:ring-0 ">
               {options?.map((option) => {
                 if (option?.secure && user?.uid !== userId) {
                   return null;
@@ -73,8 +73,12 @@ const Option = ({
                      hover:text-gray-600 p-3 dark:hover:text-gray-200 hover:bg-slate-100 dark:hover:bg-d3 px-2 min-w-[140px] rounded-md"
                     key={Math.random()}
                   >
-                    <Icon className=" min-w-[20px]">{option?.icon}</Icon>
-                    <small className="mx-3 font-semibold">
+                    <Icon className={" min-w-[20px] " + option?.className}>
+                      {option?.icon}
+                    </Icon>
+                    <small
+                      className={"mx-3 font-semibold " + option?.className}
+                    >
                       {option?.text?.replace("_", " ")}
                     </small>
                   </span>

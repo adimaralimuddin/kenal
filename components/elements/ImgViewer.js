@@ -20,6 +20,17 @@ export default function ImgViewer({ imgs, className }) {
     imgs?.[ind]?.type?.includes("video") ? vid : img;
 
   const Img = ({ ind = 0, css, autoPlay = true, imgCss, style }) => {
+    // return (
+    //   <Image
+    //     className={
+    //       "hover:scale-110 object-cover transition duration-[2s] " + imgCss
+    //     }
+    //     src={imgs?.[ind]?.url}
+    //     layout="fill"
+    //     objectFit="contain"
+    //     alt=""
+    //   />
+    // );
     return (
       <div
         style={style}
@@ -27,19 +38,22 @@ export default function ImgViewer({ imgs, className }) {
           setCur(ind);
           setOpen(true);
         }}
-        className={
-          " cursor-pointer relative overflow-hidden  flex-1 dark:brightness-75 dark:hover:brightness-100   bg-slate-200 dark:bg-slate-600 " +
-          css
-        }
+        className={"relative flex flex-1"}
+        // className={
+        //   "cursor-pointer bg-green-400  relative overflow-hidden flex-1 h-[100%] dark:brightness-75 dark:hover:brightness-100   bg-slate-200d dark:bg-slate-600 p-1  " +
+        //   css
+        // }
       >
         {type(
           <Image
             className={
-              "hover:scale-110 object-cover transition duration-[2s] " + imgCss
+              "hover:scale-110 object-cover bg-center transition duration-[2s] " +
+              imgCss
             }
             src={imgs?.[ind]?.url}
             layout="fill"
             objectFit="cover"
+            alt=""
           />,
           <div className="h-full w-full">
             <video
@@ -51,7 +65,6 @@ export default function ImgViewer({ imgs, className }) {
               <source src={imgs?.[ind]?.url} />
             </video>
           </div>,
-
           ind
         )}
       </div>
@@ -62,17 +75,13 @@ export default function ImgViewer({ imgs, className }) {
     switch (imgs?.length) {
       case 1:
         return (
-          <div className={" max-h-[400px] min-h-[400px] " + className}>
-            <Img ind={0} css="max-h-[400px] min-h-[400px]" />
+          <div className={"flex flex-col w-full aspect-video   " + className}>
+            <Img ind={0} css="max-h-[400px] dmin-h-[400px]" />
           </div>
         );
       case 2:
         return (
-          <div
-            className={
-              " flex gap-[1px] min-h-[300px] max-h-[300px] " + className
-            }
-          >
+          <div className={"  w-full aspect-video flex gap-[1px] " + className}>
             <Img ind={0} />
             <Img ind={1} />
           </div>
@@ -80,10 +89,10 @@ export default function ImgViewer({ imgs, className }) {
       case 3:
         return (
           <div
-            className={"flex flex-col  gap-[1px]  min-h-[350px]  " + className}
+            className={"flex  flex-col  gap-[1px]  min-h-[350px]  " + className}
           >
             <Img ind={0} css="flex-2 min-h-[180px] max-h-[180px]" />
-            <div className="flex flex-1 min-h-[155px] max-h-[155px]  gap-[1px] ">
+            <div className="  flex flex-1 min-h-[155px] max-h-[155px]  gap-[1px] ">
               <Img ind={1} />
               <Img ind={2} />
             </div>

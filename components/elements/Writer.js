@@ -1,10 +1,10 @@
-import Icon from "./Icon";
-import Avatar from "./Avatar";
 import { useState } from "react";
-import ImgInput from "./ImgInput";
-import ImgEditor from "./ImgEditor";
 import useUser from "../../controls/useUser";
 import { useAlert } from "./Alert";
+import Avatar from "./Avatar";
+import Icon from "./Icon";
+import ImgEditor from "./ImgEditor";
+import ImgInput from "./ImgInput";
 
 export default function Writer({
   text = "post",
@@ -19,6 +19,7 @@ export default function Writer({
   autoFocus = true,
   allowImages = true,
   setOpen,
+  userProfile,
 }) {
   const [body, setBody] = useState("");
   const [imgs, setImgs] = useState({ imgs: [] });
@@ -72,7 +73,7 @@ export default function Writer({
       <div className={"flex w-full items-center flex-wrap " + div}>
         <Avatar
           size={small ? 30 : 35}
-          src={user?.photoURL}
+          src={userProfile?.photoURL}
           userName={user?.userName || user?.email}
         />
         <textarea

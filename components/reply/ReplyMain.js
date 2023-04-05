@@ -3,7 +3,7 @@ import useReply from "../../controls/useReply";
 import ReplyItem from "./ReplyItem";
 
 export default function ReplyMain({ postId, commentId, openReply }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const {
     replies: replies_,
     removeReply,

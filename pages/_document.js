@@ -1,4 +1,4 @@
-import { Html, Head, Main, NextScript } from "next/document";
+import { Head, Html, Main, NextScript } from "next/document";
 
 export default function Document() {
   return (
@@ -17,7 +17,7 @@ export default function Document() {
         onScroll={(e) => {
           console.log("hi");
         }}
-        className="bg-[#F2F1FB] transition-colors duration-500 min-h-[100vh] dark:bg-slate-900d dark:bg-back-dark"
+        className="bg-bg-light dbg-[#f0f2f9] transition-colors duration-500 min-h-[100vh] dark:bg-slate-900d dark:bg-back-dark"
       >
         <Main />
         <NextScript />

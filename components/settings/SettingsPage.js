@@ -1,16 +1,16 @@
-import useUser from "../../controls/useUser";
-import PostSettings from "./SettingsPosts";
-import Box from "../elements/Box";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import useSettings from "../../controls/useSettings";
+import useUser from "../../controls/useUser";
+import Box from "../elements/Box";
+import Icon from "../elements/Icon";
+import MainLayout from "../main/MainLayout";
+import UserMainMenu from "../others/UserMainMenu";
 import SettingsBlocking from "./SettingsBlocking";
 import SettingsNotification from "./SettingsNotification";
-import Icon from "../elements/Icon";
-import UserMainMenu from "../others/UserMainMenu";
-import MainLayout from "../main/MainLayout";
-import { useRouter } from "next/router";
+import PostSettings from "./SettingsPosts";
 
-export default function SettingsPage() {
+export default function SettingsPage({ mini = false }) {
   const { user, loaded } = useUser();
   const router = useRouter();
   const { listen, settings, initUsers } = useSettings();
@@ -34,46 +34,68 @@ export default function SettingsPage() {
   }
 
   return (
-    <MainLayout>
-      <div className="flex justify-center">
-        <Box className="max-w-[300px] flex-[1] my-7 flex flex-col font-semibold text-slate-600">
-          <TabItem active={active} set={setActive} icon="shield">
-            Privacy
-          </TabItem>
-          <TabItem active={active} set={setActive} icon="notification-3">
-            Notification
-          </TabItem>
-          <TabItem active={active} set={setActive} icon="spam-3">
-            Block
-          </TabItem>
-        </Box>
-        <div className="flex-[3] p-2 max-w-3xl">
-          <Box className="my-5">
-            {active == "Privacy" && <PostSettings />}
-            {active == "Notification" && <SettingsNotification />}
-            {active == "Block" && <SettingsBlocking />}
-          </Box>
-        </div>
+    // <MainLayout>
+    <div className={"flex justify-center gap-4 " + (mini ? "flex-col" : "")}>
+      <div
+        className={
+          "box p-0 flex-[1]  flex  font-semibold text-slate-600 px-4 max-w-4xl " +
+          (mini ? "" : " flex-col max-w-[300px] ")
+        }
+      >
+        <TabItem active={active} set={setActive} mini={mini} icon="shield">
+          Privacy
+        </TabItem>
+        <TabItem
+          active={active}
+          set={setActive}
+          mini={mini}
+          icon="notification-3"
+        >
+          Notification
+        </TabItem>
+        <TabItem active={active} set={setActive} mini={mini} icon="spam-3">
+          Block
+        </TabItem>
       </div>
-    </MainLayout>
+      <div className="flex-[3]  max-w-4xl">
+        <SettingsContent tab={active} />
+      </div>
+    </div>
+    // </MainLayout>
   );
 }
 
-function TabItem({ children, icon, active, set }) {
+export const SettingsContent = ({ tab: active }) => {
+  return (
+    <div className="box">
+      {active == "Privacy" && <PostSettings />}
+      {active == "Notification" && <SettingsNotification />}
+      {active == "Block" && <SettingsBlocking />}
+    </div>
+  );
+};
+
+function TabItem({ children, icon, active, set, mini }) {
   const isActive = (a, b) => (active == children ? a : b);
 
   return (
     <button
       onClick={() => set(children)}
       className={
-        "ring-  py-2 " +
+        " flex items-center justify-center   py-3 rounded-none  " +
+        (mini && " flex-1 ") +
         isActive(
-          "bg-pink-300 dark:bg-pink-400 text-white hover:bg-pink-400 dark:hover:bg-pink-500",
-          "hover:bg-slate-50 dark:hover:bg-slate-700"
+          " border-primary-light dark:border-primary-dark text-primary-light dark:text-slate-100 " +
+            (mini ? " border-b-[4px]" : " border-l-[4px]"),
+          "hover:bg-slate-50 dark:hover:bg-slate-700 text-h2"
         )
       }
     >
-      <Icon className={"mx-2  " + isActive(" text-white dark:text-pink-50 ")}>
+      <Icon
+        className={
+          "mx-2  " + isActive(" text-primary-light dark:text-slate-100 ")
+        }
+      >
         {icon}
       </Icon>
       {children}

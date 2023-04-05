@@ -1,15 +1,16 @@
 import Image from "next/image";
 
 export default function Avatar(props) {
-  const { size = 40 } = props;
+  const { size = 40, userName, ...imageProps } = props;
   return (
     <div
+      {...imageProps}
       style={{
         minWidth: size,
         minHeight: size,
       }}
       className={
-        " m-1d rounded-lg overflow-hidden flex items-center m-1 min-w-[35px] min-h-[35px] w-[34px] aspect-square text-center " +
+        "relative m-1d rounded-xl overflow-hidden flex items-center m-1 min-w-[35px] min-h-[35px] w-[34px] aspect-square text-center ring-2d " +
         props?.div
       }
     >
@@ -20,13 +21,18 @@ export default function Avatar(props) {
           </h2>
         </div>
       )}
+
       {props?.src && (
-        <Image
-          {...props}
-          className={"rounded-md " + props?.className}
-          width={size}
-          height={size}
-        />
+        <div>
+          {props?.src}
+          <Image
+            src={props?.src || ""}
+            className={" bg-cover bg-center " + props?.className}
+            layout="fill"
+            objectFit="cover"
+            alt={""}
+          />
+        </div>
       )}
     </div>
   );

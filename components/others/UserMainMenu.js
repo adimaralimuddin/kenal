@@ -1,34 +1,36 @@
-import { useState } from "react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import useUser from "../../controls/useUser";
 import Avatar from "../elements/Avatar";
 import ButtonPrim from "../elements/ButtonPrim";
 import ButtonSec from "../elements/ButtonSec";
 import Droper from "../elements/Droper";
-import Link from "next/link";
 import Icon from "../elements/Icon";
 import LinkCreateAccount from "../elements/LinkCreateAccount";
 
 import { useTheme } from "next-themes";
+import toolGetDoc from "../../controls/toolGetDoc";
+import Box from "../elements/Box";
 import UserDemo from "../user/UserDemo";
 import UserLoginWithEmail from "../user/UserLoginWithEmail";
-import Box from "../elements/Box";
 export default function UserMainMenu() {
-  const { user, logout } = useUser();
+  const { set, userProfile, user, logout } = useUser();
   const [open, setOpen] = useState(false);
   const [openLog, setOpenLog] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      toolGetDoc("profile", user.uid, (user) => set({ userProfile: user }));
+    }
+  }, [user]);
   return (
     <div className="flex z-50d">
+      {user?.uid}
       {user && (
         <div onMouseEnter={(_) => setOpen(true)} className=" cursor-pointer">
-          <Avatar
-            src={user?.photoURL}
-            width={30}
-            height={30}
-            userName={user?.email}
-          />
+          <Avatar src={userProfile?.photoURL} userName={user?.email} />
         </div>
       )}
-
       <Droper
         par=" z-50 -right-0 pt-14 w-[50px]"
         open={open}
@@ -59,7 +61,6 @@ export default function UserMainMenu() {
           </button>
         </Box>
       </Droper>
-
       {!user && (
         <div onMouseEnter={(_) => setOpenLog(true)}>
           <button className=" dark:text-slate-400">Login</button>
@@ -124,7 +125,7 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggle}
-      className="hover:text-gray-600  dark:hover:text-gray-300 flex items-center justify-start py-0 my-0 px-0 mx-0  "
+      className=" hover:text-gray-600  dark:hover:text-gray-300 flex items-center justify-start py-0 my-0 px-0 mx-0  "
     >
       <Icon className=" text-2xl">
         {currentTheme() == "dark" ? "sun" : "moon"}

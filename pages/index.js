@@ -1,14 +1,16 @@
 import { useTheme } from "next-themes";
 import Image from "next/image";
+import HomePage from "../components/main/HomePage";
 import MainLayout from "../components/main/MainLayout";
 
 export default function Home() {
   return (
     <MainLayout
-      className=" bg-[#f3e8df] dark:bg-[#15151c]"
-      headerCss="bg-transparent shadow-none"
+      className=" bg-[#f3e8df]d bg-slate-50 dark:bg-[#15151c] "
+      headerCss="bg-transparent shadow-none "
     >
-      <div
+      <HomePage />
+      {/* <div
         className={` bg-[#f3e8df]d dark:bg-[#15151c]d bg-no-repeat bg-fill bg-center backdrop-blur-sm blur-smd flex flex-col text-center items-center justify-center  flex-1 pb-20 p-8 sm:flex-row `}
       >
         <MainImage />
@@ -21,7 +23,7 @@ export default function Home() {
             connect with your friends and families through Kenal.
           </h2>
         </div>
-      </div>
+      </div> */}
     </MainLayout>
   );
 }

@@ -6,6 +6,7 @@ import useUser from "../../controls/useUser";
 import { useAlert } from "../elements/Alert";
 import ButtonPrim from "../elements/ButtonPrim";
 import ButtonSec from "../elements/ButtonSec";
+import Icon from "../elements/Icon";
 import Option from "../elements/Option";
 import Verifier from "../elements/Verifier";
 
@@ -83,8 +84,7 @@ export default function RelationAction({
   return (
     <div
       className={
-        "flex items-center flex-wrap justify-between w-full mx-auto max-w-md px-2 " +
-        className
+        "flex items-center flex-wrap justify-end gap-3 w-full px-2 " + className
       }
     >
       <Verifier open={blocking} set={setBlocking} onYes={onBlockUser} />
@@ -92,7 +92,7 @@ export default function RelationAction({
       <ButtonPrim
         active={isFollower()}
         icon={isFollower("user-follow", "user-add")}
-        className={"flex-1 mx-1 p-2 "}
+        className={"btn-prime flex-1 mx-1 p-2 "}
         onClick={(_) => {
           if (!user) {
             return alertNoUser();
@@ -103,8 +103,7 @@ export default function RelationAction({
         {isFollower("following", "follow")}
       </ButtonPrim>
       {allowChat && (
-        <ButtonSec
-          icon="chat-1"
+        <Icon
           onClick={(_) => {
             if (!user) {
               return open("you must signin to chat with this user");
@@ -112,13 +111,17 @@ export default function RelationAction({
             openConver([user?.uid, userId]);
             onChatClick?.();
           }}
-          className="flex-1 mx-1 p-2 text-md px-5"
+          className="bg-sec p-2 text-primary-light dark:text-slate-100 font-semibold w-[38px] h-[38px] cursor-pointer"
         >
-          Chat
-        </ButtonSec>
+          chat-1
+        </Icon>
       )}
       {showOptions && (
-        <Option iconClass=" text-2xl " userOnly={true} options={options} />
+        <Option
+          iconClass=" text-2xl ring-1 "
+          userOnly={true}
+          options={options}
+        />
       )}
     </div>
   );

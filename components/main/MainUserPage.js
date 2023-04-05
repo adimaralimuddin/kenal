@@ -1,9 +1,3 @@
-import { useEffect, useState } from "react";
-import useUser from "../../controls/useUser";
-import UserProfileCaption from "../user/UserProfileCaption";
-import UserRelationsCaption from "../user/UserRelationsCaption";
-import UserPosts from "../post/UserPosts";
-import UserAbout from "../user/UserAbout";
 import {
   collection,
   doc,
@@ -12,11 +6,20 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { db } from "../../firebase.config";
-import RelationAction from "../reactions/RelationAction";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import useRelations from "../../controls/useRelations";
 import useSettings from "../../controls/useSettings";
-import Image from "next/image";
+import useUser from "../../controls/useUser";
+import { db } from "../../firebase.config";
+import UserPosts from "../post/UserPosts";
+import ProfileMainNavs from "../profile/ProfileMainNavs";
+import RelationAction from "../reactions/RelationAction";
+import RelationsLists from "../relations/RelationsLists";
+import UserAbout from "../user/UserAbout";
+import UserProfileCaption from "../user/UserProfileCaption";
+import UserRelationsCaption from "../user/UserRelationsCaption";
 
 function MainUserPage({ params }) {
   const { userId } = params;
@@ -26,11 +29,13 @@ function MainUserPage({ params }) {
   const [profile, setProfile] = useState({});
   const [userSettings, setUserSettings] = useState(null);
   const { listen, settings, listenUserSettings } = useSettings();
+  const router = useRouter();
+  const tab = router.query?.profileTab || "posts";
 
   const { canPostToOther, initRelation } = useRelations();
 
   useEffect(() => {
-    if (!userId || !loaded) return;
+    if (!userId || !loaded || !user) return;
     const ret = listenUserSettings(userId, setUserSettings);
     const p = listen();
     return () => {
@@ -40,6 +45,7 @@ function MainUserPage({ params }) {
   }, [userId, user]);
 
   useEffect(() => {
+    if (!userId || !user) return;
     const blockedusers = settings?.blockedusers;
     const userBlockLists = userSettings?.blockedusers;
 
@@ -93,15 +99,15 @@ function MainUserPage({ params }) {
   }
 
   return (
-    <div className=" min-h-[100vh] w-full max-w-3xl mx-auto ">
-      <div className=" bg-white dark:bg-box-dark md:mx-2 mx-0 ">
+    <div className=" min-h-[100vh] max-w-4xl flex flex-col gap-4 ">
+      <div className=" box p-0 overflow-hiddend  pb-2   ">
         <UserProfileCaption profile={profile} authId={user?.uid} />
-        <UserRelationsCaption
+        {/* <UserRelationsCaption
           userId={userId}
           relation={relation}
           postsLength={postsLength}
           authId={user?.uid}
-        />
+        /> */}
 
         {user?.uid !== profile?.id && profile && (
           <RelationAction
@@ -113,22 +119,38 @@ function MainUserPage({ params }) {
           />
         )}
       </div>
-      <div className="py-2   content-center sm:flex   flex-wrapd justify-between ">
-        <div className="flex-[1] mb-5">
-          <UserAbout
-            authId={user?.uid}
-            profile={profile}
-            profileSettings={userSettings}
-          />
-        </div>
-        <div className="flex-[2]">
+      <div className="flex flex-col gap-4 ">
+        <UserAbout
+          authId={user?.uid}
+          profile={profile}
+          profileSettings={userSettings}
+        />
+        <ProfileMainNavs />
+        {tab === "posts" && (
           <UserPosts
             userId={userId}
             authId={user?.uid}
             setLength={setPostsLength}
             canPost={canPostToOther}
           />
-        </div>
+        )}
+
+        {tab === "followers" && (
+          <RelationsLists
+            authId={user?.uid}
+            text="Followers"
+            data={relation?.followers || []}
+            userId={userId}
+          />
+        )}
+        {tab === "followings" && (
+          <RelationsLists
+            authId={user?.uid}
+            text="followings"
+            data={relation?.followings || []}
+            userId={userId}
+          />
+        )}
       </div>
     </div>
   );

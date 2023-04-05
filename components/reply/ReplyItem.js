@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
+import useReply from "../../controls/useReply";
 import useUser from "../../controls/useUser";
 import EditHist from "../elements/EditHist";
 import Icon from "../elements/Icon";
 import ImgViewer from "../elements/ImgViewer";
 import Option from "../elements/Option";
 import PostBody from "../elements/PostBody";
+import Verifier from "../elements/Verifier";
 import PostEditorMain from "../postEditor/PostEditorMain";
 import LikeMain from "../reactions/LikeMain";
 import UserItem from "../user/UserItem";
-import Verifier from "../elements/Verifier";
-import useReply from "../../controls/useReply";
 
 export default function ReplyItem({
   data,
@@ -65,6 +65,7 @@ export default function ReplyItem({
 
   return (
     <div
+      id={data?.id}
       onMouseEnter={(_) => setActive(true)}
       onMouseLeave={(_) => setActive(false)}
       className="py-1"

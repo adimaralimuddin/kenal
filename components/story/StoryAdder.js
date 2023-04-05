@@ -1,13 +1,13 @@
-import useStory from "../../controls/useStory";
-import Icon from "../elements/Icon";
-import Writer from "../elements/Writer";
-import useUser from "../../controls/useUser";
 import { useEffect, useState } from "react";
-import Box from "../elements/Box";
-import Modal from "../elements/Modal";
-import { useAlert } from "../elements/Alert";
-import InputPrivacy from "../elements/InputPrivacy";
 import useSettings from "../../controls/useSettings";
+import useStory from "../../controls/useStory";
+import useUser from "../../controls/useUser";
+import { useAlert } from "../elements/Alert";
+import Box from "../elements/Box";
+import Icon from "../elements/Icon";
+import InputPrivacy from "../elements/InputPrivacy";
+import Modal from "../elements/Modal";
+import Writer from "../elements/Writer";
 
 export default function StoryAdder({}) {
   const { settings } = useSettings();
@@ -35,18 +35,17 @@ export default function StoryAdder({}) {
   };
 
   return (
-    <div>
-      <div
-        style={{ backgroundImage: "url('img/storybg1.webp')" }}
-        className="ring-2 ring-transparent hover:ring-pink-300 flex-1 bg-cover bg-no-repeat bg-centerd flex flex-col items-center text-center justify-end rounded-lg  h-full min-w-[90px]   bg-orange-400d  text-white py-2 mx-1 "
-      >
+    <div className="flex-1 max-w-[100px] min-w-[85px]">
+      <div className="flex-1 bg-gradient-to-b from-[#c899fb] to-[#8a8ae2]  flex flex-col items-center text-center justify-end rounded-xl  h-full   text-white py-2 ">
         <button
           onClick={(_) => setOpen(true)}
-          className="ring-[3px] mb-3 ring-white p-1 text-white "
+          className="ring-[2px] bg-whited mb-1 ring-white p-[3px] text-white "
         >
-          <Icon className=" text-white dark:text-white">add</Icon>
+          <Icon className=" text-primary-light text-sm  bg-white rounded-lg  w-[30px] h-[30px]">
+            add
+          </Icon>
         </button>
-        <button>Add Story</button>
+        <button className="font-semibold text-sm">Add Story</button>
       </div>
       <Modal set={setOpen} open={open} div=" z-0 " className={" z-10 "}>
         <Box className="z-10">

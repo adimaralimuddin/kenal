@@ -7,11 +7,8 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase.config";
 
-export default async function toolGetDocs(
-  col_,
-  where_ = where(documentId(), "!=", "sdfsd")
-) {
-  const q = query(collection(db, col_), where_);
+export default async function toolGetDocs(col_, ...queries) {
+  const q = query(collection(db, col_), ...queries);
   const snap = await getDocs(q);
   return snap?.docs?.map((d) => ({ ...d.data(), id: d.id }));
 }

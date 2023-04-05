@@ -47,7 +47,7 @@ export default function StoryItem({ data, onOpen, ind }) {
           data?.images?.[0]?.url || "/img/storybg1.webp"
         }")`,
       }}
-      className="min-w-[85px] hover:-translate-y-1 hover:shadow-md transition flex-1 cursor-pointer overflow-hidden bg-center bg-cover bg-no-repeat text-white p-1 flex flex-col  justify-between items-center content-center text-center rounded-xl h-full min-w-[100px]d max-w-[100px] mx-1 relative"
+      className="min-w-[85px]  transition flex-1 cursor-pointer overflow-hidden bg-center bg-cover bg-no-repeat text-white p-1 flex flex-col  justify-between items-center content-center text-center rounded-xl h-full  max-w-[100px] relative"
     >
       <UserItem
         pop={false}
@@ -56,7 +56,7 @@ export default function StoryItem({ data, onOpen, ind }) {
         noName="on"
         small="on"
       />
-      <small className="absolute top-0 left-0 h-full bg-gray-900  bg-opacity-20 w-full flex-1 overflow-y-clip px-2 flex flex-col items-center justify-center">
+      <small className="absolute top-0 drop-shadow-md left-0 h-full bg-gray-900  bg-opacity-5 w-full flex-1 overflow-y-clip px-2 flex flex-col items-center justify-center ">
         {data?.body}
       </small>
       {isVid(

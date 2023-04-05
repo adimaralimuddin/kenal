@@ -1,39 +1,26 @@
 import { useEffect, useState } from "react";
-import useChat from "../../controls/useChat";
-import Box from "../elements/Box";
-import ChatItem from "./ChatItem";
-import Writer from "../elements/Writer";
-import useUser from "../../controls/useUser";
-import UserItem from "../user/UserItem";
-import Icon from "../elements/Icon";
-import Avatar from "../elements/Avatar";
+import UseMessages from "../../controls/chats/useMessages";
 import toolGetDoc from "../../controls/toolGetDoc";
-import {
-  collection,
-  onSnapshot,
-  orderBy,
-  query,
-  where,
-} from "firebase/firestore";
-import { db } from "../../firebase.config";
-import useNotifs from "../../controls/useNotifs";
-import useSettings from "../../controls/useSettings";
+import useChat from "../../controls/useChat";
+import useUser from "../../controls/useUser";
+import Avatar from "../elements/Avatar";
+import Avatars from "../elements/Avatars";
+import Box from "../elements/Box";
+import Icon from "../elements/Icon";
+import Writer from "../elements/Writer";
+import MessageFeeds from "../messages/MessageFeeds";
+import ConverseItem from "../messages/conver/ConverseItem";
+import UserItem from "../user/UserItem";
+import ChatItem from "./ChatItem";
 
 export default function ConverItem({ converItem, ind, width }) {
-  const { conver, id: converId } = converItem;
+  const { conver, converse } = converItem;
   const { user } = useUser();
-  const {
-    addChat,
-    minimizeConver,
-    closeConver,
-    removeConver,
-    checkChatPrivacy,
-    set,
-  } = useChat();
+  const chat = useChat();
   const [minimized, setMinimized] = useState(false);
-  const [chats, setChats] = useState([]);
-  const { addNotif } = useNotifs();
-  const { getUserSettings } = useSettings();
+  const msg = UseMessages();
+  const chats = chat?.[converse?.id];
+  const [converseSnap, setConverseSnap] = useState();
 
   useEffect(() => {
     check();
@@ -42,126 +29,136 @@ export default function ConverItem({ converItem, ind, width }) {
   function check() {
     if (ind >= 3) {
       setMinimized(true);
-      minimizeConver(conver);
+      chat.minimizeConver(converse);
     }
 
     if (ind == 2) {
       if (window?.innerWidth < 1100) {
         setMinimized(true);
-        minimizeConver(conver);
+        chat.minimizeConver(converse);
       } else {
         setMinimized(false);
-        minimizeConver(conver, false);
+        chat.minimizeConver(converse, false);
       }
     }
 
     if (ind == 1) {
       if (window?.innerWidth < 700) {
         setMinimized(true);
-        minimizeConver(conver);
+        chat.minimizeConver(converse);
       } else {
-        minimizeConver(conver, false);
+        chat.minimizeConver(converse, false);
         setMinimized(false);
       }
     }
   }
 
-
-  // const checkPrivacy = () => {
-    
-  // }
-
   useEffect(() => {
-    // const u = getUserSettings(conver?.[1]);
-    // console.log("useru ", u);
-
-    const q = query(
-      collection(db, "chats"),
-      where("converId", "in", [conver?.[1] + conver?.[0], conver?.join("")]),
-      orderBy("timestamp", "asc")
-    );
-
-    onSnapshot(q, (snap) => {
-      setChats(snap?.docs?.map((d) => ({ ...d.data(), id: d.id })));
-    });
-  }, [conver]);
-
-  useEffect(() => {
+    // chat.openConverseData(converse);
+    // msg.listenConverseItem(converse, setConverseSnap);
     checkPrivacy();
   }, [conver]);
 
+  useEffect(() => {
+    if (!converse) return;
+    const unsub = chat.listenConverseCat(converse);
+    return () => {
+      unsub?.();
+    };
+  }, [converse]);
+
   async function checkPrivacy() {
-    const privacy = await checkChatPrivacy(conver);
+    const privacy = await chat.checkChatPrivacy(converse?.members);
     if (!privacy) {
-      set((p) => {
-        const convers = p?.convers?.filter((p) => p?.id !== converId);
+      chat.set((p) => {
+        const convers = p?.convers?.filter((p) => p?.id !== converItem.id);
         return { convers };
       });
     }
   }
 
-  async function onAddChat({ body, imgs }, clear) {
-    checkPrivacy();
-    const chat = await addChat(
-      {
-        data: {
-          conver,
-          body,
-          converId: conver[0] + conver[1],
-          userId: [user?.uid],
-        },
-        imgs,
-      },
-      clear
-    );
-    console.log("chat ", chat);
-    addNotif(conver[1], user?.uid, "chat", conver?.toString());
-  }
+  // const onPostHandler = async ({ body, imgs }, clear) => {
+  //   const data = {
+  //     body,
+  //     converseId: converse.id,
+  //     userId: [user.uid],
+  //   };
+  //   await msg.addChat({ data, imgs, converse: converseSnap });
+  //   clear();
+  // };
 
   if (minimized) {
     return null;
   }
 
   return (
-    <Box className="flex mx-2 flex-col shadow-lg max-w-[300px] max-h-[90vh] ring-1 ring-gray-200 min-w-[150px]d min-h-[200px] px-0 py-0  ">
-      <p>open: {converItem?.open?.toString()}</p>
+    <Box className="flex mx-2 flex-col shadow-lg shadow-indigo-200 dark:shadow-none max-w-[300px] max-h-[90vh] ring-1 ring-slate-200 min-w-[150px]d min-h-[200px] px-0 py-0  ">
       <div className="flex items-center justify-between pr-1">
-        <UserItem userId={conver[1]} dnoName="on" fpop={false} par=" -left-5" />
+        {converse?.type === "private" && (
+          <UserItem
+            userId={conver[1]}
+            dnoName="on"
+            fpop={false}
+            par=" -left-5"
+          />
+        )}
+        {converse?.type === "group" && (
+          <ConverseItem
+            conver={converse}
+            noAvatars={true}
+            allowMiniChat={false}
+          />
+        )}
         <div className="flex items-center ">
           <Icon
-            onClick={(_) => closeConver(conver)}
+            onClick={() => chat.closeConver(converse)}
             className="ring-1d rounded-full cursor-pointer"
           >
             subtract
           </Icon>
           <Icon
-            onClick={(_) => removeConver(conver)}
+            onClick={() => chat.removeConver(converse)}
             className="ring-1d rounded-full cursor-pointer"
           >
             close
           </Icon>
         </div>
       </div>
-      <hr />
-      <div className="flex-1 p-2 max-h-[70vh] overflow-y-auto flex flex-col">
-        <Caption userId={conver?.[1]} />
-        {chats?.map((chat) => (
-          <ChatItem data={chat} key={chat?.id} />
+      <MessageFeeds feedId={converse?.id} converse={converse} chats={chats} />
+      {/* <div className="flex-1 p-2 max-h-[70vh] overflow-y-auto flex flex-col bg-slate-100 dark:bg-black">
+        {converse?.type === "group" && <GroupCaption converse={converse} />}
+        {converse?.type === "private" && <Caption userId={conver?.[1]} />}
+        {chats?.map((chatItemData) => (
+          <ChatItem data={chatItemData} key={chatItemData?.id} />
         ))}
-      </div>
-      <hr />
-
-      <Writer
-        onPost={onAddChat}
+      </div> */}
+      {/* <Writer
+        onPost={onPostHandler}
         text="reply"
         user={user}
         small="on"
         className="p-1 ring-1d"
-      />
+      /> */}
     </Box>
   );
 }
 
+function GroupCaption({ converse }) {
+  return (
+    <div className="text-center flex flex-col items-center text-gray-500 py-4 mb-3">
+      <Avatar
+        src={converse?.photoURL}
+        size={70}
+        userName={converse?.name}
+        className="rounded-full"
+      />
+      <p className="font-semibold text-gray-700 dark:text-slate-400">
+        {converse?.name}
+      </p>
+      <Avatars userIds={converse?.members} />
+    </div>
+  );
+}
 function Caption({ userId }) {
   const [profile, setProfile] = useState();
   useEffect(() => {

@@ -19,7 +19,7 @@ import useUser from "./useUser";
 export default function useReply(commentId, postId) {
   const { user } = useUser();
   const [replies, setReplies] = useState([]);
-  const { addNotif } = useNotifs();
+  const { addNotif, notify } = useNotifs();
   const { settings, getUserSettings } = useSettings();
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export default function useReply(commentId, postId) {
     console.log("reps data = ", data_);
     const data = {
       commentId,
-      postId,
+      postId: data_?.postId,
       userId: user?.uid,
       body: data_?.body,
       postUserId: data_?.postUserId,
@@ -57,18 +57,30 @@ export default function useReply(commentId, postId) {
 
     console.log("rep data = ", data);
 
-    await toolPostAdder(data, data_?.imgs, "replies", () => {
+    const addedReply = await toolPostAdder(data, data_?.imgs, "replies", () => {
       clear();
     });
 
     if (data_?.commentUserId !== user?.uid) {
-      addNotif(
-        data_.commentUserId,
-        user.uid,
-        "reply-comment",
-        data_?.postId,
-        data_?.commentId
-      );
+      notify({
+        to: data_?.commentUserId,
+        from: user.uid,
+        docId: data_?.postId,
+        notif: "reply",
+        type: "comment",
+        subtype: "reply",
+        msg: "reply on your comment.",
+        actionId: data_?.commentId,
+        text: data?.body,
+        id: addedReply.id,
+      });
+      // addNotif(
+      //   data_.commentUserId,
+      //   user.uid,
+      //   "reply-comment",
+      //   data_?.postId,
+      //   data_?.commentId
+      // );
     }
 
     if (data?.replyTo) {

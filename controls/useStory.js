@@ -9,14 +9,14 @@ import {
 } from "firebase/firestore";
 import create from "zustand";
 import { db } from "../firebase.config";
+import { isFollowing } from "../tools/toolRelations";
+import toolGetDocs from "./toolGetDocs";
 import toolPostAdder from "./toolPostAdder";
-import useUser from "./useUser";
 import toolRemoveDoc from "./toolRemoveDoc";
 import toolUpdatedoc from "./toolUpdateDoc";
-import toolGetDocs from "./toolGetDocs";
-import useSettings from "./useSettings";
-import { isFollowing } from "../tools/toolRelations";
 import useRelations from "./useRelations";
+import useSettings from "./useSettings";
+import useUser from "./useUser";
 
 const store_ = create((set) => create({ body: "", set: (data) => set(data) }));
 export default function useStory() {
@@ -173,7 +173,6 @@ export default function useStory() {
     errorer
   ) {
     const data = { prev, body, images, privacy };
-    console.log("privacy ", data);
     return await toolUpdatedoc("stories", docId, data, caller, errorer);
   }
 

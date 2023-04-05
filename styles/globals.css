@@ -8,6 +8,48 @@
   }
 }
 
+@layer components {
+  .bg-prime {
+    @apply bg-primary-light dark:bg-primary-dark;
+  }
+  .bg-sec {
+    @apply bg-sec-light dark:bg-sec-dark;
+  }
+  .box {
+    @apply p-3 rounded-xl bg-white dark:bg-bg-dark;
+  }
+  .box-ring {
+    @apply ring-1 ring-slate-200 dark:ring-slate-800;
+  }
+  .text-h2 {
+    @apply text-slate-600 dark:text-slate-300 font-medium px-2;
+  }
+  .btn {
+    @apply rounded-xl flex items-center justify-center px-3 p-1.5 text-sm max-w-[200px];
+  }
+  .btn-prime {
+    @apply bg-prime text-white btn;
+  }
+  .btn-sec {
+    @apply btn bg-sec-light  text-primary-light  dark:bg-sec-dark dark:text-white;
+  }
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+  .circle {
+    @apply w-[clamp(35px,35px,35px)] aspect-square;
+  }
+  .input {
+    @apply rounded-lg;
+  }
+  .input-div {
+    @apply flex flex-col gap-1;
+  }
+  .input-text {
+    @apply text-sm font-medium text-slate-500;
+  }
+}
+
 html,
 body {
   padding: 0;
@@ -24,12 +66,12 @@ a {
 * {
   box-sizing: border-box;
   outline: none;
+  scroll-behavior: smooth;
 }
 
 input,
 select {
   padding: 4px 7px;
-  margin: 10px 0px;
   border-radius: 7px;
 }
 
@@ -55,7 +97,7 @@ button {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: rgb(148, 147, 154);
+  background: rgb(151, 154, 168);
   border-radius: 10px;
 }
 

@@ -11,7 +11,7 @@ export default function CommentMain({
   hookComments,
   postUserSettings,
 }) {
-  const { user } = useUser();
+  const { user, userProfile } = useUser();
   const [open, setOpen] = useState(false);
   const [privacy, setPrivacy] = useState(false);
   const { relations } = useRelations();
@@ -56,6 +56,7 @@ export default function CommentMain({
           }}
           text="comment"
           user={user}
+          userProfile={userProfile}
         />
       )}
       {open && (

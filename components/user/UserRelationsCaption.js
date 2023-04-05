@@ -16,7 +16,7 @@ export default function UserRelationsCaption({
   if (!userId || !authId || !relation) return null;
 
   return (
-    <div className="flex items-center py-5d justify-center px-3 text-gray-500 dark:text-gray-500 mx-auto w-full max-w-lg  flex-wrap gap-x-2 ">
+    <div className="flex items-center justify-center px-3 text-gray-500 dark:text-gray-500 mx-auto w-full max-w-lg  flex-wrap gap-x-2 ">
       {!noPost && (
         <div className="flex gap-2 text-center flex-1 cursor-pointer  hover:underline">
           <p>{postsLength}</p>
@@ -50,10 +50,10 @@ function Item({ data, text, show, authId, userId }) {
   return (
     <div
       onClick={(_) => setOpen((p) => !p)}
-      className="flex flex-col text-center flex-1 cursor-pointer  hover:underline py-5 animate-pop"
+      className="flex flex-col text-center flex-1 cursor-pointer  hover:underline  animate-pop pb-2"
     >
       <div className="flex gap-2 items-center justify-center ring-1d">
-        <h3 className="font-semibold text-lg">{data?.length || 0}</h3>
+        <h3 className="font-semibold text-medium">{data?.length || 0}</h3>
         <p>{text}</p>
       </div>
       <Modal

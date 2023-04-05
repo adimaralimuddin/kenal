@@ -36,7 +36,7 @@ export default function Posts() {
   );
 
   return (
-    <div className="">
+    <div className="flex flex-col gap-4">
       {totalPosts?.map((post) => (
         <PostItem data={post} key={post?.id} />
       ))}

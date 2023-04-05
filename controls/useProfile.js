@@ -1,6 +1,6 @@
-import useUser from "./useUser";
 import create from "zustand";
 import toolUpdatedoc from "./toolUpdateDoc";
+import useUser from "./useUser";
 
 const store_ = create((set) => ({
   set: (data) => set(data),
@@ -18,6 +18,7 @@ export default function useProfile() {
 
   return {
     ...store,
+    user,
     update,
   };
 }

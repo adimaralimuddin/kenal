@@ -6,9 +6,6 @@ import {
   signInWithPopup,
   signOut,
 } from "firebase/auth";
-import { useEffect } from "react";
-import { auth, db } from "../firebase.config";
-import create from "zustand";
 import {
   collection,
   doc,
@@ -17,53 +14,71 @@ import {
   serverTimestamp,
   setDoc,
 } from "firebase/firestore";
-import toolGetDoc from "./toolGetDoc";
-import toolUpdatedoc from "./toolUpdateDoc";
+import create from "zustand";
 import { useAlert } from "../components/elements/Alert";
+import { auth, db } from "../firebase.config";
+import toolGetDoc from "./toolGetDoc";
 const store_ = create((set) => ({ loaded: false, set: (data) => set(data) }));
 
 const userRef = (id) => doc(db, "users", id);
-const usersRef = collection(db, "users");
+const profileRef = (id) => doc(db, "profile", id);
 
 export default function useUser() {
   const store = store_();
   const { set, user } = store;
   const { open, close, pop } = useAlert();
 
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
-      set({ user, loaded: true });
-      if (user) {
-        getDoc(userRef(user?.uid), (snap) => {
-          if (snap?._document) {
-            console.log("got", snap);
-            try {
-              setDoc(
-                userRef(user?.uid),
-                {
-                  online: true,
-                  onlineAt: new Date(),
-                },
-                { merge: true }
-              );
-            } catch (error) {
-              console.log("authStateChanged error ", error);
-            }
-          }
-        });
+  function listen() {
+    const unsub = onAuthStateChanged(auth, async (usersnap) => {
+      set({ user: usersnap, loaded: true });
+      if (usersnap) {
+        localStorage.setItem("userId", usersnap.uid);
+      }
+      if (usersnap) {
+        try {
+          const profile = await getDoc(profileRef(usersnap?.uid));
+          // console.log("proffffff---", profile?.data());
+          if (!profile._document) return console.log("no profile");
+          setDoc(
+            profileRef(usersnap?.uid),
+            {
+              online: true,
+              onlineAt: new Date(),
+            },
+            { merge: true }
+          );
+        } catch (error) {
+          console.log("authStateChanged error ", error);
+        }
       }
     });
-    return () => unsub();
-  }, []);
+    return unsub;
+  }
+
+  function setOffline() {
+    const userId = localStorage.getItem("userId");
+    setDoc(
+      profileRef(userId),
+      {
+        online: false,
+        offlineAt: new Date(),
+      },
+      { merge: true }
+    );
+  }
 
   async function logout() {
     open("loging out . . .", true);
-    const checkUser = await getDoc(userRef(user?.uid));
+    const checkUser = await getDoc(profileRef(user?.uid));
     if (checkUser?._document) {
-      await toolUpdatedoc("users", user?.uid, {
-        online: false,
-        offlineAt: new Date(),
-      });
+      await setDoc(
+        profileRef(user?.uid),
+        {
+          online: false,
+          offlineAt: new Date(),
+        },
+        { merge: true }
+      );
     }
     await signOut(auth);
     pop("loged out.");
@@ -123,9 +138,9 @@ export default function useUser() {
     try {
       if (user) {
         open("checking user . . . ", true);
-        const recorededUser = await getDoc(userRef(user?.uid));
+        const existingUserRecord = await getDoc(userRef(user?.uid));
 
-        if (!recorededUser?._document) {
+        if (!existingUserRecord?._document) {
           open("preparing user account . . .", true);
           await createUserCreds(user);
           passer?.(user);
@@ -177,6 +192,7 @@ export default function useUser() {
         seeAbout: "Only_me",
         canChat: "Followers",
         // notification default setting
+
         notifreactpost: true,
         notifcommentpost: true,
         notifsharepost: true,
@@ -217,13 +233,22 @@ export default function useUser() {
     });
   }
 
+  function listenProfile(userId, caller) {
+    return onSnapshot(profileRef(userId), (doc) => {
+      caller?.({ ...doc?.data(), id: doc?.id });
+    });
+  }
+
   return {
     ...store,
+    listen,
     logout,
     loginWithGoogle,
     LoginWIthEmail,
     createUser,
     getUser,
     listenUser,
+    listenProfile,
+    setOffline,
   };
 }

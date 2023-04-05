@@ -9,7 +9,7 @@ const date = new Date();
 
 export default function UserAbout({ profile, authId, profileSettings }) {
   const privacy = profileSettings?.seeAbout;
-  const { set, update } = useProfile();
+  const { set, update, user } = useProfile();
   const [open, setOpen] = useState();
   const { isFollowings } = useRelations();
 
@@ -21,6 +21,8 @@ export default function UserAbout({ profile, authId, profileSettings }) {
   function set_(obj) {
     set((p) => ({ data: { ...p?.data, ...obj } }));
   }
+
+  if (!user?.uid) return;
 
   if (privacy == "Only_me" && authId !== profile?.id) {
     return null;
@@ -34,28 +36,30 @@ export default function UserAbout({ profile, authId, profileSettings }) {
 
   return (
     <div className="flex-1 text-gray-500  min-w-[35%] ">
-      <Box className="w-fulld text-sm ring-1 ring-slate-200">
-        <p className="text-center text-md font-semibold">About</p>
-        <div className="p-2">
-          {Object.entries(profile?.data || {})?.map((f) => (
-            <p className="" key={f?.[0]}>
-              {f?.[0]} : <span className="ml-2  text-blue-400">{f?.[1]}</span>
-            </p>
-          ))}
+      <div className="box box-ringd text-sm ">
+        <h2 className=" text-h2 font-medium text-[1.1rem] px-3">About</h2>
+        <div className=" flex gap-3">
+          <div className="p-2 flex-1">
+            {Object.entries(profile?.data || {})?.map((f) => (
+              <p className="" key={f?.[0]}>
+                {f?.[0]} : <span className="ml-2  text-blue-400">{f?.[1]}</span>
+              </p>
+            ))}
 
-          {Object.entries(profile?.data || {})?.length == 0 && (
-            <p className="text-center pt-2"> No Data yet!</p>
+            {Object.entries(profile?.data || {})?.length == 0 && (
+              <p className="text-center pt-2"> No Data yet!</p>
+            )}
+          </div>
+          {profile?.id == authId && (
+            <button
+              className="btn-prime self-end"
+              onClick={(_) => setOpen(true)}
+            >
+              Edit About
+            </button>
           )}
         </div>
-        {profile?.id == authId && (
-          <ButtonPrim
-            className="w-full max-w-none mb-0"
-            onClick={(_) => setOpen(true)}
-          >
-            edit about
-          </ButtonPrim>
-        )}
-      </Box>
+      </div>
 
       <Modal open={open} set={setOpen}>
         <Box className="flex flex-col gap-2 text-gray-500 bg-whites p-[1.5rem]">

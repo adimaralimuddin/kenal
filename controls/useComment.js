@@ -23,7 +23,7 @@ export default function useComment(
 ) {
   const { user } = useUser();
   const [comments, setComments] = useState();
-  const { addNotif } = useNotifs();
+  const { addNotif, notify } = useNotifs();
   const { isFollowings } = useRelations();
   const { settings, getUserSettings } = useSettings();
 
@@ -56,9 +56,25 @@ export default function useComment(
       body: data_?.body,
       status: "public",
     };
-    await toolPostAdder(data, data_?.imgs, "comments", caller);
+    const addedComment = await toolPostAdder(
+      data,
+      data_?.imgs,
+      "comments",
+      caller
+    );
     if (postUserId !== user?.uid) {
-      addNotif(data_?.postUserId, user?.uid, "comment-post", data_?.postId);
+      notify({
+        to: data_?.postUserId,
+        from: user?.uid,
+        docId: data_?.postId,
+        notif: "comment",
+        type: "post",
+        subtype: "comment",
+        msg: "comment on your post.",
+        actionId: addedComment.id,
+        text: data?.body,
+        id: data_?.postId + addedComment.id,
+      });
     }
   }
 

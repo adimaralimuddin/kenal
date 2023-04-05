@@ -1,9 +1,9 @@
-import { doc, onSnapshot } from "firebase/firestore";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { db } from "../../firebase.config";
+import useUser from "../../controls/useUser";
 import Avatar from "../elements/Avatar";
 import UserInfoPop from "./UserInfoPop";
-import Link from "next/link";
 
 export default function UserItem({
   userId,
@@ -11,28 +11,33 @@ export default function UserItem({
   noName,
   noImg,
   className,
-  textClass = " text-slate-600 dark:text-slate-400 inline -block dwhitespace-nowrap   font-semibold text-sm  underline-offset-1 ",
+  textClass = " text-slate-600 dark:text-slate-400 inline -block font-semibold text-sm  underline-offset-1 ",
   small,
   pop = true,
   size,
   par,
   passer = () => {},
   inlineText,
+  after,
   postUserSettings,
+  nameClass,
+  defaultUser,
 }) {
-  const [data_, setData] = useState();
+  const [userProfileData, setUserProfileData] = useState(defaultUser);
   const [open, setOpen] = useState(false);
   const [showPop, setShowPop] = useState(false);
+  const { listenProfile } = useUser();
+  const router = useRouter();
 
   useEffect(() => {
     if (!userId) return;
-    const ret = onSnapshot(doc(db, "users", userId), (snap) => {
-      const nData = { ...snap?.data(), id: snap?.id };
-      setData(nData);
-      passer(nData);
+    const unsub = listenProfile(userId, (profileSnap) => {
+      setUserProfileData(profileSnap);
+      passer(profileSnap);
     });
-
-    return () => ret();
+    return () => {
+      unsub?.();
+    };
   }, [userId]);
 
   function toOpen(e) {
@@ -51,7 +56,7 @@ export default function UserItem({
         setOpen(false);
         setShowPop(false);
       }}
-      className={"  flex items-center p-1 " + className}
+      className={"  flex items-center " + className}
     >
       <UserInfoPop
         par={" -top-5 pt-12 " + par}
@@ -61,47 +66,50 @@ export default function UserItem({
         open={open && pop}
         set={setOpen}
         userId={userId}
-        data={data_}
+        data={userProfileData}
       />
       {!noImg && (
-        <div className="flex ">
-          <Avatar
-            className="cursor-pointer "
-            onMouseOver={toOpen}
-            src={data_?.avatar}
-            userName={data_?.userName}
-            size={size || (small ? 30 : 35)}
-          />
-          {data_?.online && (
-            <span className="relative">
-              <div className=" absolute top-0 right-0 ring-2 ring-white bg-pink-400 p-1 rounded-full"></div>
-            </span>
-          )}
-        </div>
+        <Link href={{ query: { ...router?.query, userId, tab: "profile" } }}>
+          <div className="flex ">
+            <Avatar
+              className="cursor-pointer "
+              // onMouseOver={toOpen}
+              src={userProfileData?.photoURL}
+              userName={userProfileData?.displayName}
+              size={size || (small ? 30 : 35)}
+            />
+            {userProfileData?.online && (
+              <span className="relative">
+                <div className=" absolute top-0 right-0 ring-2 ring-white bg-pink-400 p-1 rounded-full"></div>
+              </span>
+            )}
+          </div>
+        </Link>
       )}
       {!noName && (
         <div
-          className={
-            " flexd flex-cold justify-startd overflow-visible " +
-            (!noImg && " ml-2 ")
-          }
+          className={" overflow-visible " + (!noImg && " ml-2 ") + nameClass}
         >
-          <Link href={`/user/${userId}`}>
+          <Link
+            href={{ pathname: "/feed", query: { userId, tab: "profile" } }}
+            dhref={`/user/${userId}`}
+          >
             <h2
               onMouseEnter={toOpen}
               className={
                 textClass +
                 (small && " text-smd ") +
-                (pop && " hover:underline cursor-pointer ")
+                (pop && " hover:underline cursor-pointer dark:text-slate-300 ")
               }
             >
-              {data_?.userName}
+              {userProfileData?.displayName}
               {inlineText}
             </h2>
           </Link>
           {children}
         </div>
       )}
+      {after && after}
     </div>
   );
 }
