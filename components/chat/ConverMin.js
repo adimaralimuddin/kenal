@@ -1,23 +1,26 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import toolGetDoc from "../../controls/toolGetDoc";
-import toolUpdatedoc from "../../controls/toolUpdateDoc";
-import useChat from "../../controls/useChat";
+import useMiniChat from "../../controls/chats/miniChat/useMiniChat";
+import UseMiniChatStore from "../../controls/chats/miniChat/useMiniChatStore";
+import useChatListeners from "../../controls/chats/useChatListeners";
 import useUser from "../../controls/useUser";
-import Avatar from "../elements/Avatar";
 import Icon from "../elements/Icon";
 import IconBadge from "../elements/IconBadge";
 
 function ConverMin({ converItem, className }) {
   const { conver, converse } = converItem;
-  const chat = useChat();
-  const [user, setUser] = useState();
+  const chat = useMiniChat();
+  const { listenConverseChat } = useChatListeners();
+  const store = UseMiniChatStore();
+  const { user } = useUser();
   const [userProfile, setUserProfileData] = useState(null);
   const [active, setActive] = useState(false);
-  const [incomingChats, setIncomingChats] = useState([]);
+  // const [incomingChats, setIncomingChats] = useState([]);
   const { listenProfile } = useUser();
   const chats = chat?.[converse?.id];
-  const notifs = chats?.filter((c) => c?.seen === false);
+  const notifs = chats?.filter(
+    (c) => c?.seen === false && c?.userId !== user?.uid
+  );
 
   useEffect(() => {
     if (converse?.type === "private") {
@@ -27,19 +30,21 @@ function ConverMin({ converItem, className }) {
 
   useEffect(() => {
     if (!converse) return;
-    const unsub = chat.listenConverseCat(converse);
+    const unsub = listenConverseChat(converse, (chatsSnap) => {
+      store.set({ [converse.id]: chatsSnap });
+    });
     return () => {
       unsub?.();
     };
   }, [converse]);
 
-  const setNotifsToSeen = () => {
-    incomingChats?.length
-      ? incomingChats?.map((unseenChat) => {
-          toolUpdatedoc("notifs", unseenChat.id, { seen: true });
-        })
-      : null;
-  };
+  // const setNotifsToSeen = () => {
+  //   incomingChats?.length
+  //     ? incomingChats?.map((unseenChat) => {
+  //         toolUpdatedoc("notifs", unseenChat.id, { seen: true });
+  //       })
+  //     : null;
+  // };
 
   const getUser2 = async () => {
     return listenProfile(conver?.[1], (userSnap) => {
@@ -57,9 +62,9 @@ function ConverMin({ converItem, className }) {
       onMouseLeave={(_) => setActive(false)}
       onMouseEnter={(_) => setActive(true)}
     >
-      {incomingChats?.length > 0 && (
+      {/* {incomingChats?.length > 0 && (
         <IconBadge value={incomingChats?.length} className="top-2 absolute" />
-      )}
+      )} */}
 
       {active && (
         <Icon
@@ -74,7 +79,7 @@ function ConverMin({ converItem, className }) {
       <div
         onClick={(_) => {
           chat.openMiniConverse(converse);
-          setNotifsToSeen();
+          // setNotifsToSeen();
         }}
         className={
           "flex flex-col items-center justify-center ring-[3px] ring-whited shadow-lg cursor-pointer overflow-hidden relative min-w-[50px] min-h-[50px] rounded-full bg-pink-400 " +

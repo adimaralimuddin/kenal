@@ -11,19 +11,28 @@ const MessageCreatorModal = ({ open, set }) => {
   return (
     <div>
       <Modal open={open} set={set}>
-        <div className="box flex flex-col flex-1 gap-2 p-4 ">
-          <header className="flex items-center justify-between gap-4">
-            <h2 className="text-h2">Create Message</h2>
+        <div className="box flex flex-col flex-1 gap-2 p-4  ">
+          <header className="flex items-center justify-between gap-4 ">
+            <h2 className="text-h2">
+              {!isCreatingGroupChat
+                ? "Create Message"
+                : "Creating a Group Chat"}
+            </h2>
             {!isCreatingGroupChat && (
               <GroupChatCreatorButton set={setIsCreatingGroupChat} />
             )}
           </header>
+          {/* <h2 className="text-h2">Create Group Chat</h2> */}
           <div className="flex-1  flex flex-col p-2">
             {isCreatingGroupChat && (
-              <GroupChatCreator set={setIsCreatingGroupChat} />
+              <GroupChatCreator set={setIsCreatingGroupChat} setOpen={set} />
             )}
             {!isCreatingGroupChat && (
-              <MessageCreatorUsers users={users} setUsers={setUsers} />
+              <MessageCreatorUsers
+                users={users}
+                setUsers={setUsers}
+                setOpen={set}
+              />
             )}
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import useSettings from "../../controls/useSettings";
 import useUser from "../../controls/useUser";
+import ToolDateToDisplay from "../../controls/utils/toolDateToDisplay";
 import { useAlert } from "../elements/Alert";
 import Option from "../elements/Option";
 import PrivacyIcon from "../elements/PrivacyIcon";
@@ -22,8 +23,9 @@ export default function Header({ data, state, removePost }) {
     });
   };
 
-  const onblockPost = () => {
-    block("blockedposts", data?.postBy);
+  const onblockPost = async () => {
+    await block("blockedposts", data?.postBy);
+    state.set({ privacy: false });
   };
 
   const options = [
@@ -54,7 +56,6 @@ export default function Header({ data, state, removePost }) {
       action: () => state.set((p) => ({ viewEdit: !p.viewEdit })),
     });
   }
-
   return (
     <div
       onMouseLeave={(_) => setActive(false)}
@@ -68,8 +69,9 @@ export default function Header({ data, state, removePost }) {
           passer={state.key("postUser")}
           className="py-0 px-0 dark:text-slate-300"
         >
-          <small className="text-gray-400 dark:text-gray-400 text-[.7em] block">
-            {new Date(data?.timestamp?.seconds)?.toDateString()}
+          <small className="text-gray-500 dark:text-gray-400 text-[.7em] font-medium block">
+            {ToolDateToDisplay(data?.timestamp?.toDate())}
+            {/* {new Date(data?.timestamp?.seconds)?.toDateString()} */}
           </small>
         </UserItem>
         <div className="flex pt-1d items-center ring-1d">

@@ -18,7 +18,6 @@ const ExplorePostItem = () => {
     const ret = setTimeout(() => {
       if (commentRef.current && postId && state.post && actionId) {
         commentRef.current?.click();
-        console.log("goooooo");
       }
     }, [1000]);
 

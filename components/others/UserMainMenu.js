@@ -1,9 +1,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import useUser from "../../controls/useUser";
-import Avatar from "../elements/Avatar";
-import ButtonPrim from "../elements/ButtonPrim";
-import ButtonSec from "../elements/ButtonSec";
+
 import Droper from "../elements/Droper";
 import Icon from "../elements/Icon";
 import LinkCreateAccount from "../elements/LinkCreateAccount";
@@ -12,6 +10,7 @@ import { useTheme } from "next-themes";
 import toolGetDoc from "../../controls/toolGetDoc";
 import Box from "../elements/Box";
 import UserDemo from "../user/UserDemo";
+import UserItem from "../user/UserItem";
 import UserLoginWithEmail from "../user/UserLoginWithEmail";
 export default function UserMainMenu() {
   const { set, userProfile, user, logout } = useUser();
@@ -25,10 +24,10 @@ export default function UserMainMenu() {
   }, [user]);
   return (
     <div className="flex z-50d">
-      {user?.uid}
+      {/* {user?.uid} */}
       {user && (
         <div onMouseEnter={(_) => setOpen(true)} className=" cursor-pointer">
-          <Avatar src={userProfile?.photoURL} userName={user?.email} />
+          <UserItem userId={user?.uid} noName={true} />
         </div>
       )}
       <Droper
@@ -88,22 +87,25 @@ export function LogoutMenu({ open, set }) {
           onClick={(e) => {
             e.stopPropagation();
           }}
-          className="flex flex-col "
+          className="flex flex-col gap-2 "
         >
           <UserLoginWithEmail open={loginPop} set={setLoginPop} />
-          <ButtonPrim
+          <button
             onClick={() => setLoginPop(true)}
-            className="mt-0 mb-0"
+            className="btn-prime text-base px-6"
             active={true}
           >
             Login With Email
-          </ButtonPrim>
-          <ButtonSec className="mb-1 " onClick={onLoginWithGoogle}>
+          </button>
+          <button
+            className=" btn-sec text-base px-6 "
+            onClick={onLoginWithGoogle}
+          >
             Signin With Google
-          </ButtonSec>
+          </button>
           <LinkCreateAccount />
         </div>
-        <h1 className="text-center">OR</h1>
+        <p className="text-center text-sm">OR</p>
         <UserDemo />
       </Box>
     </Droper>

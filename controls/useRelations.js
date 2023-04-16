@@ -9,7 +9,7 @@ import useUser from "./useUser";
 const store_ = create((set) => ({ set: (data) => set(data) }));
 
 export default function useRelations() {
-  const { addNotif, notify } = useNotifs();
+  const { notify, updateNotif } = useNotifs();
   const store = store_();
   const { set, relations } = store;
   const { user } = useUser();
@@ -26,6 +26,45 @@ export default function useRelations() {
       set({ relations: { ...doc_?.data(), id: doc_?.id } });
     });
   }
+  async function acceptFollowRequest(by, to) {
+    await toolArrayUnion("relations", to, "followings", by);
+    await toolArrayUnion("relations", by, "followers", to);
+    await toolArrayRemove("relations", by, "request", to);
+
+    notify({
+      to,
+      from: by,
+      docId: by,
+      type: "profile",
+      subtype: "accepted",
+      notif: "follow",
+    });
+    updateNotif({
+      notifId: "request" + to + by,
+      data: { confirmed: true, seen: true },
+    });
+  }
+
+  async function declineFollowRequest(by, to) {
+    await toolArrayRemove("relations", by, "request", to);
+    await toolArrayUnion("relations", by, "declined", to);
+    notify({
+      to,
+      from: by,
+      docId: by,
+      type: "profile",
+      subtype: "declined",
+      notif: "follow",
+    });
+    updateNotif({
+      notifId: "request" + to + by,
+      data: { confirmed: true, seen: true, canceled: true },
+    });
+  }
+
+  async function cancelRequest(userId) {
+    await toolArrayRemove("relations", userId, "request", user.uid);
+  }
 
   async function followUser(to, by) {
     const rel = await toolGetDoc("relations", to);
@@ -40,20 +79,25 @@ export default function useRelations() {
         type: "profile",
         subtype: "unfollow",
         notif: "follow",
+        confirmed: false,
+        seen: false,
+        canceled: false,
       });
-      // addNotif(to, by, "unfollow", to);
     } else {
-      toolArrayUnion("relations", by, "followings", to);
-      toolArrayUnion("relations", to, "followers", by);
-      // addNotif(to, by, "follow", to);
-      notify({
+      await notify({
         to,
-        from: by,
-        docId: to,
-        type: "profile",
-        subtype: "follow",
+        from: user.uid,
+        type: "relation",
+        subtype: "sendrequest",
         notif: "follow",
+        msg: "want's to follow you.",
+        docId: to,
+        id: "request" + user.uid + to,
+        confirmed: false,
+        seen: false,
+        canceled: false,
       });
+      toolArrayUnion("relations", to, "request", by);
     }
   }
 
@@ -66,6 +110,13 @@ export default function useRelations() {
   }
   function isFollowings(relation = relations, userId) {
     if (relation?.followings?.find((p) => p == userId)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  function isRequesting(relation = relations, userId) {
+    if (relation?.request?.find((p) => p == user?.uid)) {
       return true;
     } else {
       return false;
@@ -153,5 +204,9 @@ export default function useRelations() {
     isFollowings,
     checkChatPrivacy,
     checkBlockUser,
+    acceptFollowRequest,
+    cancelRequest,
+    declineFollowRequest,
+    isRequesting,
   };
 }

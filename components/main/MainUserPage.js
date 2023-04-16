@@ -19,7 +19,6 @@ import RelationAction from "../reactions/RelationAction";
 import RelationsLists from "../relations/RelationsLists";
 import UserAbout from "../user/UserAbout";
 import UserProfileCaption from "../user/UserProfileCaption";
-import UserRelationsCaption from "../user/UserRelationsCaption";
 
 function MainUserPage({ params }) {
   const { userId } = params;

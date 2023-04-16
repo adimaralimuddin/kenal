@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import UseMessages from "../../../controls/chats/useMessages";
+import UseMessages from "../../../controls/chats/messages/useMessages";
 import useUser from "../../../controls/useUser";
 import Option from "../../elements/Option";
 

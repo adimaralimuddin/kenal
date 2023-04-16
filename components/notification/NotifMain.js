@@ -11,7 +11,7 @@ const NotifMain = () => {
     return unsub;
   }, [user]);
   return (
-    <div className="box h-full flex flex-col gap-2 -z-50 overflow-y-auto m-[1px]">
+    <div className="box h-full flex flex-col gap-2 -dz-50 overflow-y-auto m-[1px] ">
       <h2 className="text-h2 font-medium text-lg px-2">Notifications</h2>
       <h2 className="font-s  px-2 text-slate-500 dark:text-slate-400  ">
         You have {notifs?.length} Notifications

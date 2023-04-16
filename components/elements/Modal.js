@@ -22,15 +22,15 @@ export default function Modal({ open, set, children, div, className }) {
       <div
         onClick={(e) => e.stopPropagation()}
         className={
-          " relative  flex flex-col animate-pop w-full h-full max-w-xl max-h-[350px] p-2 " +
-          div
+          " relative  flex flex-col animate-pop w-full max-w-xl  p-2 " + div
         }
       >
         <IconBtn
           onClick={(_) => {
             set(false);
           }}
-          className="absolute -top-5 right-2 text-xl w-[35px] h-[35px] text-center font-bold ring-2 ring-slate-200 dark:ring-slate-800"
+          className="absolute -top-5 right-2 rounded-lg min-w-[35px] min-h-[35px] flex flex-col items-center justify-center font-bold shadow-md"
+          // className="absolute -top-5 right-2 text-xl w-[35px] h-[35px] text-center font-bold ring-2 ring-slate-200 dark:ring-slate-800"
         >
           close
         </IconBtn>

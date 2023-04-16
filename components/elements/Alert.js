@@ -1,8 +1,8 @@
 import React from "react";
-import Modal from "./Modal";
 import create from "zustand";
 import Box from "./Box";
 import Icon from "./Icon";
+import Modal from "./Modal";
 
 const store_ = create((set) => ({
   state: false,
@@ -58,10 +58,10 @@ export default function Alert() {
     <Modal
       open={state}
       set={toggle}
-      div="z-50"
+      div="z-[200]"
       className="bg-opacity-27 backdrop-blur-sm z-[999]"
     >
-      <Box className="animate-pop duration-1000 transition-all text-slate-500 gap-2 flex flex-col items-center justify-center text-center min-h-[100px] min-w-[150px] font-semibold p-6 z-[999] max-w-md">
+      <Box className="animate-pop duration-1000 transition-all text-slate-500 gap-2 flex flex-col items-center justify-center text-center min-h-[100px] min-w-[150px] font-semibold p-6 z-[999] max-w-mdd">
         {text}
         {loader && (
           <Icon className="animate-spin text-[2rem] font-bold text-purple-400 dark:text-purple-400">

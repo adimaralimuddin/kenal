@@ -2,11 +2,13 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import Box from "../elements/Box";
 import ButtonPrim from "../elements/ButtonPrim";
+import Icon from "../elements/Icon";
 import IconBtn from "../elements/IconBtn";
 import ImgEditor from "../elements/ImgEditor";
 import ImgInput from "../elements/ImgInput";
-import TextArea from "../elements/TextArea";
 import InputPrivacy from "../elements/InputPrivacy";
+import Modal from "../elements/Modal";
+import TextArea from "../elements/TextArea";
 
 export default function PostEditorMain({ data, onUpdate, open, setOpen }) {
   const [body, setBody] = useState(data?.body);
@@ -21,14 +23,14 @@ export default function PostEditorMain({ data, onUpdate, open, setOpen }) {
 
   const onUpdateHandler = async () => {
     setOpen(false);
-    await onUpdate(
-      data?.body,
+    await onUpdate({
+      prev: data?.body,
       body,
-      imgs?.imgs || [],
-      data,
-      data?.img?.idLength,
-      privacy
-    );
+      images: imgs?.imgs || [],
+      docId: data?.id,
+      imgLength: data?.img?.idLength,
+      privacy,
+    });
   };
 
   // const reset = () => {
@@ -45,38 +47,43 @@ export default function PostEditorMain({ data, onUpdate, open, setOpen }) {
   if (!open) return null;
 
   return (
-    <div
-      onClick={(_) => setOpen(false)}
-      className=" flex flex-col items-center justify-center fixed top-0 left-0 bg-gray-900 w-full h-full z-30 bg-opacity-80 backdrop-blur-lg"
+    <Modal
+      open={open}
+      set={setOpen}
+      // onClick={(_) => setOpen(false)}
+      // className=" flex flex-col  fixed top-0 left-0 bg-gray-900 w-full h-full z-30 bg-opacity-80 backdrop-blur-lg"
     >
-      <Box
-        className="relative w-full max-w-sm p-5"
+      <div
+        className="relative box flex-col flex p-[4%] gap-2 "
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between">
-          <h1 className="text-lg front-semibold">Editing post</h1>
+        <header>
+          <h2 className="text-h2">Editing post</h2>
+        </header>
+
+        <div className="ring-1d flex  flex-1 w-full text-semibold text-slate-500 bg-slate-100 dark:text-slate-200 rounded-lg overflow-hidden ">
+          <TextArea
+            autoFocus={true}
+            onChange={(e) => setBody(e.target.value)}
+            value={body}
+          />
+          {/* <p className="flex items-center  px-1"> */}
+          <IconBtn
+            className="rounded-none bg-transparent dark:bg-transparent flex items-center justify-center"
+            onClick={() => setBody(data?.body)}
+          >
+            refresh
+          </IconBtn>
+          {/* </p> */}
+        </div>
+        <div className="flex">
           <InputPrivacy onInput={setPrivacy} defaultValue={data?.privacy} />
         </div>
-        <IconBtn
-          onClick={(_) => setOpen(false)}
-          className="bg-white -right-5 absolute -top-5 "
-        >
-          close
-        </IconBtn>
-        <div className="ring-1 flex  flex-1 w-full text-slate-500 dark:text-slate-200 rounded-lg overflow-hidden ring-d2 my-2 ">
-          <TextArea onChange={(e) => setBody(e.target.value)} value={body} />
-          <p className="flex items-center bg-d2 px-1">
-            <IconBtn
-              className="rounded-none bg-transparent dark:bg-transparent "
-              onClick={() => setBody(data?.body)}
-            >
-              refresh
-            </IconBtn>
-          </p>
+        <div>
+          <h1 className="px-1 text-slate-600 font-semibold">post images</h1>
+          <ImgEditor imgs={imgs?.imgs} set={setImgs} onSet={onSet} />
         </div>
-
-        <ImgEditor imgs={imgs?.imgs} set={setImgs} onSet={onSet} />
-        <div className="flex items-center gap-3 justify-between">
+        <div className="flex items-center gap-3 justify-between flex-wrap">
           <IconBtn
             className="mr-auto"
             onClick={() => setImgs({ imgs: data?.images })}
@@ -84,16 +91,14 @@ export default function PostEditorMain({ data, onUpdate, open, setOpen }) {
             refresh
           </IconBtn>
           <ImgInput onInput={onSet} dset={setImgs}>
-            <Image
-              src="/img/gallery.png"
-              height={29}
-              width={29}
-              className="mx-2"
-            />
+            <Icon className="text-3xl">image-add</Icon>
           </ImgInput>
-          <ButtonPrim onClick={onUpdateHandler}>Update</ButtonPrim>
+          <button className="btn-prime px-6 " onClick={onUpdateHandler}>
+            Update
+          </button>
+          {/* <ButtonPrim onClick={onUpdateHandler}>Update</ButtonPrim> */}
         </div>
-      </Box>
-    </div>
+      </div>
+    </Modal>
   );
 }

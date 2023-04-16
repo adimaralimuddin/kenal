@@ -80,7 +80,7 @@ export default function UserItem({
             />
             {userProfileData?.online && (
               <span className="relative">
-                <div className=" absolute top-0 right-0 ring-2 ring-white bg-pink-400 p-1 rounded-full"></div>
+                <div className=" absolute top-0 right-0  bg-green-400 p-[3px] rounded-full"></div>
               </span>
             )}
           </div>
@@ -106,6 +106,7 @@ export default function UserItem({
               {inlineText}
             </h2>
           </Link>
+
           {children}
         </div>
       )}

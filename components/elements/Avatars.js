@@ -6,12 +6,14 @@ const Avatars = ({ userIds }) => {
   const [profiles, setProfiles] = useState([]);
   return (
     <div className="flex">
-      {userIds?.map((id) => (
+      {userIds?.slice(0, 3)?.map((id) => (
         <Item id={id} key={id} setProfiles={setProfiles} />
       ))}
       <small className="pl-4 text- text-slate-500 dark:text-slate-400">
-        {profiles?.[0]?.displayName} and {userIds?.length - 1} other
-        {userIds?.length - 1 > 1 ? "s" : ""}
+        {profiles?.[0]?.displayName}
+        {userIds?.length > 1 &&
+          ` and  ${userIds?.length - 1} other
+ ${userIds?.length - 1 > 1 ? "s" : ""}`}
       </small>
     </div>
   );

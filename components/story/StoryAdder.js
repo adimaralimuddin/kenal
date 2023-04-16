@@ -35,7 +35,7 @@ export default function StoryAdder({}) {
   };
 
   return (
-    <div className="flex-1 max-w-[100px] min-w-[85px]">
+    <div className="z-10 sticky left-0 flex-1 max-w-[110px] min-w-[100px]">
       <div className="flex-1 bg-gradient-to-b from-[#c899fb] to-[#8a8ae2]  flex flex-col items-center text-center justify-end rounded-xl  h-full   text-white py-2 ">
         <button
           onClick={(_) => setOpen(true)}

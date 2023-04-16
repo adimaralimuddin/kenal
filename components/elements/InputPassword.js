@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Icon from "./Icon";
 
 export default function InputPassword({
   className,
@@ -12,13 +13,13 @@ export default function InputPassword({
   return (
     <div
       className={
-        "flex items-stretch ring-1 rounded-lg overflow-hidden ring-slate-300 dark:ring-d1 " +
+        "flex items-stretch ring-1 rounded-lg overflow-hidden ring-slate-300 text-base " +
         className
       }
     >
       <input
         className={
-          "flex-1 m-0 bg-transparent dark:bg-transparent rounded-none " +
+          "flex-1 m-0 px-3 p-2 bg-transparent dark:bg-transparent rounded-none " +
           inputClassName
         }
         onInput={onInput}
@@ -33,7 +34,8 @@ export default function InputPassword({
         className="flex flex-col items-center justify-center select-none cursor-pointer text-right px-2 min-w-[55px] dark:bg-d1 dark:hover:bg-d2"
         onClick={() => setHide((p) => !p)}
       >
-        {hide ? "show" : "hide"}
+        {/* <Icon>eye</Icon> */}
+        <Icon>{hide ? "eye-off" : "eye"}</Icon>
       </p>
     </div>
   );

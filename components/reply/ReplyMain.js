@@ -17,8 +17,8 @@ export default function ReplyMain({ postId, commentId, openReply }) {
   }, [replies_]);
 
   return (
-    <div className="ring-1d ml-[2%]">
-      <p
+    <div className="py-2">
+      {/* <p
         onClick={(_) => setOpen((p) => !p)}
         className=" text-endd ring-1d cursor-pointer text-sm text-gray-400  "
       >
@@ -27,9 +27,9 @@ export default function ReplyMain({ postId, commentId, openReply }) {
             ? replies?.length - 1 + " more replies"
             : (replies?.length || "no") + " replies"
           : (replies?.length || "no") + " replies"}
-      </p>
+      </p> */}
       {open && (
-        <div className="pt-2">
+        <div className="pt-2 flex flex-col gap-3">
           {replies?.map((reply) => (
             <ReplyItem
               par={[replies, setReplies]}

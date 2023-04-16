@@ -1,23 +1,12 @@
 import React from "react";
-import UseMessages from "../../../controls/chats/useMessages";
-import useUser from "../../../controls/useUser";
+import UseMessages from "../../../controls/chats/messages/useMessages";
 
-const ConverLeaveBtn = ({ conver }) => {
-  const { leaveGroupChat, selectedConverse } = UseMessages();
-  const { user } = useUser();
+const ConverLeaveBtn = () => {
+  const { leaveGroupChat } = UseMessages();
 
   const onLeaveGroupHandler = () => {
-    console.log("conver sss", selectedConverse);
     leaveGroupChat();
-    // leaveGroupChat({
-    //   from: conver.from,
-    //   converseId: conver.id,
-    // });
   };
-
-  if (selectedConverse?.userId === user?.uid) {
-    return null;
-  }
 
   return (
     <div>

@@ -16,7 +16,7 @@
     @apply bg-sec-light dark:bg-sec-dark;
   }
   .box {
-    @apply p-3 rounded-xl bg-white dark:bg-bg-dark;
+    @apply p-3 rounded-xl bg-white dark:bg-[#263345];
   }
   .box-ring {
     @apply ring-1 ring-slate-200 dark:ring-slate-800;
@@ -25,13 +25,16 @@
     @apply text-slate-600 dark:text-slate-300 font-medium px-2;
   }
   .btn {
-    @apply rounded-xl flex items-center justify-center px-3 p-1.5 text-sm max-w-[200px];
+    @apply rounded-xl flex items-center justify-center px-3 p-1.5 text-sm max-w-[200px] font-medium;
   }
   .btn-prime {
     @apply bg-prime text-white btn;
   }
+  .btn-warm {
+    @apply bg-pink-600 hover:bg-pink-500 dark:bg-pink-700 text-white dark:text-slate-200 btn;
+  }
   .btn-sec {
-    @apply btn bg-sec-light  text-primary-light  dark:bg-sec-dark dark:text-white;
+    @apply btn bg-sec-light  text-primary-light  dark:bg-slate-600 dark:text-slate-300;
   }
   .flex-center {
     @apply flex items-center justify-center;

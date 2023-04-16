@@ -15,26 +15,27 @@ export default async function toolPostAdder(
   col_ = "posts",
   call = () => {}
 ) {
-  const x = await addDoc(collection(db, col_), {
+  // const { user } = useUser();
+  const addedDoc = await addDoc(collection(db, col_), {
     ...data,
     timestamp: serverTimestamp(),
   });
-  call?.(x);
+  call?.(addedDoc);
 
   if (imgs) {
-    updateDoc(doc(db, col_, x?.id), {
+    updateDoc(doc(db, col_, addedDoc?.id), {
       imgLength: imgs?.length || 0,
     });
 
     imgs?.map(async (img, ind) => {
-      const stRef = ref(storage, `/files/${col_}/${x?.id}/${ind}`);
+      const stRef = ref(storage, `/files/${col_}/${addedDoc?.id}/${ind}`);
       const uploadTask = await uploadBytes(stRef, img?.file);
       const url = await getDownloadURL(uploadTask.ref);
-      updateDoc(doc(db, col_, x?.id), {
+      updateDoc(doc(db, col_, addedDoc?.id), {
         images: arrayUnion({ ind, url, type: img?.type }),
       });
     });
   }
 
-  return x;
+  return addedDoc;
 }

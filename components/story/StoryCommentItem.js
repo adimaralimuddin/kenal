@@ -14,7 +14,7 @@ export default function StoryCommentItem({ data, par }) {
   const { user } = useUser();
   const [active, setActive] = useState(false);
   const [_, setComments] = par;
-
+  // console.log("story comment item: ", data);
   useEffect(() => {
     checkPrivacy();
   }, [data]);
@@ -58,25 +58,27 @@ export default function StoryCommentItem({ data, par }) {
           <Option userId={data?.userId} options={options} par="pt-5" />
         )}
       </div>
-
       <div className="bg-slate-100 dark:bg-d2 text-sm ml-10 ring-1 ring-slate-200 dark:ring-0 p-2 rounded-lg self-start text-gray-500 dark:text-gray-300">
         <p>{data?.body}</p>
       </div>
-
       <ImgViewer
         imgs={data?.images}
         className="max-h-[250px]d min-h-[200px] p-2"
       />
-
       <PostEditorMain
         data={data}
         open={open}
         setOpen={setOpen}
         onUpdate={storyCommentUpdate}
       />
-
       <span className="ml-10 py-1">
-        <LikeMain col_="storyComments" data={data} size="small" />
+        <LikeMain
+          postId={data.storyId}
+          col_="storyComments"
+          data={data}
+          size="small"
+          
+        />
       </span>
     </div>
   );

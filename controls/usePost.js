@@ -135,7 +135,7 @@ export default function usePost() {
       }
       const lastPost = snap?.docs?.[snap?.docs?.length - 1];
       setState((p) => {
-        const x = p?.posts?.filter((p) => {
+        const updatedPosts = p?.posts?.filter((p) => {
           if (posts?.find((i) => i?.id == p?.id)) {
             return false;
           } else {
@@ -153,12 +153,12 @@ export default function usePost() {
             // console.log("Removed city: ", change.doc.data());
           }
         });
-        return { posts: [...x, ...posts], lastPost };
+        return { posts: [...updatedPosts, ...posts], lastPost };
       });
     });
   } // end of loadMorePost
 
-  async function addPost(to, caller) {
+  async function addPost(to, body, caller) {
     if (!body) return;
 
     set({ loading: true });
@@ -232,7 +232,6 @@ export default function usePost() {
 
   async function postPrivacyCheck(data, userSettings) {
     const { privacy, to, postBy } = data;
-
     if (!user) {
       if (privacy == "Public") {
         return true;
@@ -286,22 +285,12 @@ export default function usePost() {
     }
   } // end of checkPostPrivacy
 
-  async function updatePost(
-    prev,
-    body,
-    images,
-    docId,
-    imgLength,
-    privacy,
-    caller
-  ) {
-    await toolUpdatedoc("posts", docId, {
-      prev,
-      body,
-      images,
-      imgLength,
-      privacy,
-    });
+  async function updatePost(updatedPostdata) {
+    const { prev, body, images, docId, imgLength, privacy, caller } =
+      updatedPostdata;
+
+    console.log("updatedPostdata", updatedPostdata);
+    await toolUpdatedoc("posts", docId, updatedPostdata);
     caller?.();
     return caller;
   }

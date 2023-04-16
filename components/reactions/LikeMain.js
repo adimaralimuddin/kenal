@@ -6,6 +6,7 @@ import Icon from "../elements/Icon";
 import UsersListPop from "../user/UsersListPop";
 
 export default function LikeMain({
+  postId,
   data,
   col_,
   size,
@@ -16,6 +17,8 @@ export default function LikeMain({
   loveFill,
   likeClass,
   loveClass,
+  noIcon,
+  noNotif = false,
 }) {
   const { user } = useUser();
   const { like, love } = useReaction();
@@ -46,46 +49,41 @@ export default function LikeMain({
     if (!user) {
       return alertNoUser();
     }
-    console.log("data", data);
-    like({
-      docId: data?.id,
-      authId: user?.uid,
-      likes: data?.likes,
-      col_,
-      docUserId: Array.isArray(data?.userId) ? data?.userId?.[0] : data?.userId,
-      postId: data?.postId,
-      text: data?.body,
-    });
-    // like(
-    //   data?.id,
-    //   user?.uid,
-    //   data?.likes,
-    //   col_,
-    //   Array.isArray(data?.userId) ? data?.userId?.[0] : data?.userId
-    // );
+    // console.log("to like data: ", data);
+    like(
+      {
+        docId: data.id,
+        postId,
+        authId: user?.uid,
+        likes: data?.likes,
+        col_,
+        docUserId: Array.isArray(data?.userId)
+          ? data?.userId?.[0]
+          : data?.userId,
+        text: data?.body,
+      },
+      noNotif
+    );
   }
 
   function onLoveHandler() {
     if (!user) {
       return alertNoUser("love");
     }
-    console.log("love postidata", data);
-    love({
-      docId: data?.id,
-      authId: user?.uid,
-      loves: data?.loves,
-      col_,
-      docUserId: Array.isArray(data?.userId) ? data?.userId?.[0] : data?.userId,
-      postId: data?.postId,
-      text: data?.body,
-    });
-    // love(
-    //   data?.id,
-    //   user?.uid,
-    //   data?.loves,
-    //   col_,
-    //   Array.isArray(data?.userId) ? data?.userId?.[0] : data?.userId
-    // );
+    love(
+      {
+        docId: data?.id,
+        postId,
+        authId: user?.uid,
+        loves: data?.loves,
+        col_,
+        docUserId: Array.isArray(data?.userId)
+          ? data?.userId?.[0]
+          : data?.userId,
+        text: data?.body,
+      },
+      noNotif
+    );
   }
 
   return (
@@ -114,20 +112,33 @@ export default function LikeMain({
             set={setOpen}
             text="Likers"
           />
-
-          <Icon
-            size={size}
-            active={data?.likes?.find((i) => i == user?.uid)}
-            activeStyle={likeActiveStyle}
-            fill={likeFill}
-            className={likeClass}
-          >
-            thumb-up
-          </Icon>
-          <small>{data?.likes?.length || ""}</small>
+          {noIcon && (
+            <small
+              className={
+                "hover:underline dark:text-slate-400 hover:text-blue-400 " +
+                (data?.likes?.find((i) => i == user?.uid) &&
+                  "text-blue-400 dark:text-blue-300")
+              }
+            >
+              like
+            </small>
+          )}
+          {!noIcon && (
+            <Icon
+              size={size}
+              active={data?.likes?.find((i) => i == user?.uid)}
+              activeStyle={likeActiveStyle}
+              fill={likeFill}
+              className={likeClass}
+            >
+              thumb-up
+            </Icon>
+          )}
+          <small className="whitespace-nowrap pl-1">
+            {data?.likes?.length ? `(${data?.likes?.length})` : ""}
+          </small>
         </button>
       </div>
-
       <div
         onMouseEnter={(_) => {
           setOpenL(false);
@@ -152,16 +163,31 @@ export default function LikeMain({
             set={setOpenL}
             text="Lovers"
           />
-          <Icon
-            size={size}
-            active={data?.loves?.find((i) => i == user?.uid)}
-            activeStyle={loveActiveStyle}
-            fill={loveFill}
-            className={loveClass}
-          >
-            heart
-          </Icon>
-          <small>{data?.loves?.length || ""}</small>
+          {noIcon && (
+            <small
+              className={
+                "active:scale-110 dark:text-slate-400 hover:underline hover:text-pink-400 " +
+                (data?.loves?.find((i) => i == user?.uid) &&
+                  " text-pink-400 dark:text-pink-400  ")
+              }
+            >
+              love
+            </small>
+          )}
+          {!noIcon && (
+            <Icon
+              size={size}
+              active={data?.loves?.find((i) => i == user?.uid)}
+              activeStyle={loveActiveStyle}
+              fill={loveFill}
+              className={loveClass}
+            >
+              heart
+            </Icon>
+          )}
+          <small className="whitespace-nowrap pl-1 ">
+            {data?.loves?.length ? `(${data?.loves?.length})` : ""}
+          </small>
         </button>
       </div>
     </div>

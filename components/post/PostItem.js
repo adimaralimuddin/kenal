@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import usePost from "../../controls/usePost";
 import useRelations from "../../controls/useRelations";
 import useSettings from "../../controls/useSettings";
@@ -21,7 +21,7 @@ const PostItem = ({ data, state }) => {
 
   useEffect(() => {
     if (!data) return;
-    const ret = checkPrivacy();
+    checkPrivacy();
   }, [data, relations, state?.postUserSettings]);
 
   useEffect(() => {
@@ -45,21 +45,22 @@ const PostItem = ({ data, state }) => {
 
   if (!state?.privacy) return null;
 
-  const onUpdatePost = async (
+  const onUpdatePost = async ({
     prev,
     body,
     images,
     docId,
     imgLength,
-    privacy
-  ) => {
+    privacy,
+  }) => {
     openAlert("Updating post . . . ", true);
-    await updatePost(prev, body, images, docId, imgLength, privacy);
+    await updatePost({ prev, body, images, docId, imgLength, privacy });
     pop("Post updated!", "check");
   };
 
   return (
-    <div className="box box-ring animate-pop duration-500 pb-1 flex flex-col min-h-[300px]  mx-0 px-0 py-0 ">
+    <div className="box box-ring animate-pop  pb-1 flex flex-col min-h-[300px]  mx-0 px-0 py-0 ">
+      {/* <small>{data?.id}</small> */}
       <PostHeader data={data} state={state} removePost={removePost} />
       <PostBodyStyle data={data} />
       <EditHist show={state?.viewEdit} data={data} className="text-sm px-2" />
@@ -73,6 +74,8 @@ const PostItem = ({ data, state }) => {
 
       <ImgViewer imgs={data?.images} oppose={data?.vids} />
       <LikeMain
+        docId={data.id}
+        postId={data.id}
         data={data}
         col_="posts"
         className="pt-2"

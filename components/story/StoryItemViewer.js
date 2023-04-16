@@ -1,15 +1,15 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import useSettings from "../../controls/useSettings";
 import useStory from "../../controls/useStory";
 import useUser from "../../controls/useUser";
-import Option from "../elements/Option";
-import UserItem from "../user/UserItem";
-import PostEditorMain from "../postEditor/PostEditorMain";
-import Verifier from "../elements/Verifier";
-import useSettings from "../../controls/useSettings";
-import StoryTimerItem from "./StoryTimerItem";
 import { useAlert } from "../elements/Alert";
+import Option from "../elements/Option";
 import PrivacyIcon from "../elements/PrivacyIcon";
+import Verifier from "../elements/Verifier";
+import PostEditorMain from "../postEditor/PostEditorMain";
+import UserItem from "../user/UserItem";
+import StoryTimerItem from "./StoryTimerItem";
 export default function StoryItemViewer({
   total,
   ind,
@@ -126,7 +126,7 @@ export default function StoryItemViewer({
       style={{
         backgroundImage: `url("/img/storybg1.webp")`,
       }}
-      className="bg-center bg-cover bg-no-repeat relative flex-1 flex flex-col rounded-2xl shadow-xl bg-gray-900 p-2 text-white min-h-[300px] w-full max-w-sm overflow-hidden  "
+      className="bg-center bg-cover bg-no-repeat relative flex-1 flex flex-col rounded-2xl shadow-xl bg-gray-900 p-2 text-white  w-full h-full overflow-hidden "
     >
       <Verifier open={deleting} set={setDeleting} onYes={onRemoveStory} />
       <Verifier open={blocking} set={setBlocking} onYes={onBlockStory} />
@@ -151,7 +151,6 @@ export default function StoryItemViewer({
           vid={vid}
         />
       )}
-
       <PostEditorMain
         onUpdate={onUpdateStory}
         data={story()}
@@ -197,13 +196,13 @@ export default function StoryItemViewer({
 
 function Header({ story, setPlay, setMuted, play, muted, options, vid }) {
   return (
-    <div className="flex items-center justify-between z-20 ">
+    <div className="flex items-start justify-between z-20 ">
       <UserItem
         userId={story()?.userId}
         className=" text-white "
         textClass=" text-white "
       />
-      <div className=" flex items-center justify-center ">
+      <div className=" flex items-center flex-wrap justify-center ">
         <PrivacyIcon
           className=" bg-gray-700 bg-opacity-30 text-white p-2 dark:text-white"
           privacy={story()?.privacy}

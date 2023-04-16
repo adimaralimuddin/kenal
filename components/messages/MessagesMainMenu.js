@@ -3,10 +3,10 @@ import UseMessageRequest from "../../controls/chats/useMessageRequest";
 import Menu from "../elements/Menu";
 
 const MessagesMainMenu = () => {
-  const { notifs, getNotifBadge } = UseMessageRequest();
+  const { getNotifBadge } = UseMessageRequest();
   const textClass = " hidden md:block ";
   return (
-    <div className="box flex p-0 px-6  ">
+    <div className=" flex px-2  ">
       <Menu
         tab="all"
         tabText="messageTab"
@@ -14,19 +14,19 @@ const MessagesMainMenu = () => {
         defaultTab={"all"}
         textClass={textClass}
       />
-      <Menu
+      {/* <Menu
         tab="personal"
         tabText="messageTab"
         icon="chat-smile-2"
         textClass={textClass}
-      />
-      <Menu
+      /> */}
+      {/* <Menu
         tab="group"
         tabText="messageTab"
         icon="discuss"
         text="Group Chats"
         textClass={textClass}
-      />
+      /> */}
       <Menu
         badgeValue={getNotifBadge()}
         tab="request"

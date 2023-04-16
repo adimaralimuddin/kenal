@@ -33,6 +33,14 @@ function SettingsNotification() {
         <Item field="notifpostprofile" text="post comment">
           Notify when someone post on your profile
         </Item>
+        {/* STORY */}
+        <Header>Stories</Header>
+        <Item field="notifreactstoryComments" text="react">
+          Notify when someone react on your story
+        </Item>
+        <Item field="notifcommentstory" text="react">
+          Notify when someone comment on your story
+        </Item>
         {/* <Item field="notifpostprofile" text="post comment">
           Notify when someone post on your profile
         </Item> */}
@@ -48,20 +56,28 @@ function SettingsNotification() {
         <Item field="notifreactreply" text="reply">
           Notify when someone react on your replies
         </Item>
+        <Item field="notifreplyreply" text="reply">
+          Notify when someone reply on your replies
+        </Item>
         <Item field="notifmention" text="reply">
           Notify when someone mentioned you on your reply
+        </Item>
+
+        <Header>Messages</Header>
+        <Item field="notifrequestmessage" text="tagged">
+          Notify when someone request you on a group chat
         </Item>
 
         <Header>tags and follows</Header>
         <Item field="notiftaggedpost" text="tagged">
           Notify when someone tagged you on a post
         </Item>
-        <Item field="notiffollow" text="follow">
-          Notify when someone started to followed you
+        <Item field="notiffollowrelation" text="follow">
+          Notify when someone started to followed or unfollow you
         </Item>
-        <Item field="notifunfollow" text="unfollow">
+        {/* <Item field="notifunfollow" text="unfollow">
           Notify when someone just unfollowed you
-        </Item>
+        </Item> */}
       </div>
     </div>
   );

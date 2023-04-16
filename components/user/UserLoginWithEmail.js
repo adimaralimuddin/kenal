@@ -16,9 +16,9 @@ export default function UserLoginWithEmail({ open, set }) {
 
   return (
     <Modal open={open} set={set}>
-      <Box className="flex flex-col ">
+      <Box className="flex flex-col pb-6 ">
         <Form onSubmit={onLoginWithEmailAndPassWord} />
-        <h1 className="text-center">OR</h1>
+        <h3 className="text-center text-sm">OR</h3>
         <LinkCreateAccount />
       </Box>
     </Modal>

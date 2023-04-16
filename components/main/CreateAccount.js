@@ -1,3 +1,4 @@
+import Image from "next/image";
 import useUser from "../../controls/useUser";
 import { MainImage } from "../../pages";
 import { useAlert } from "../elements/Alert";
@@ -27,17 +28,29 @@ function CreateAccount() {
   };
 
   return (
-    <Mainlayout className=" bg-[#f3e8df] dark:bg-[#15151c]">
-      <div className="transition-colors duration-500 flex flex-cold md:flex-rowd flex-1 bg-[#f3e8df] dark:bg-[#15151c] items-center  justify-center p-3 flex-wrap-reverse">
-        <MainImage className="md:block hidden" />
-        <div className=" m-3 px-6 py-[30px] flex-1 max-w-sm flex flex-col items-stretch bg-[#f7f0ec] dark:bg-box-dark rounded-xl shadow-xl ring-1 ring-pink-300d ring-[#f3deec] dark:ring-0">
+    <Mainlayout
+      className="  bg-slate-100 dark:bg-slate-900 "
+      headerCss={" bg-transparent"}
+    >
+      <div className="transition-colors duration-500 flex gap-12 flex-cold  flex-1 items-center  justify-center p-3 flex-wrap-reverse">
+        {/* <MainImage className="md:block hidden" /> */}
+        <div className="bg-pink-400 rounded-[10%] rotate-3 relative p-2 min-w-[300px]d max-w-[400px] w-full aspect-square ">
+          <Image
+            className=""
+            src={"/hero-image3.png"}
+            layout="fill"
+            objectFit="contain"
+            alt=""
+          />
+        </div>
+        <div className=" box m-3 px-6 py-[30px] flex-1 max-w-md flex flex-col items-stretch  rounded-xl shadow-xl  ring-pink-300d  dark:ring-0">
           <Form
             onSubmit={onSubmitHandler}
             text="Create new account"
             btnText={"create account"}
           />
 
-          <div className=" ring-1d flex flex-col px-4 border-t-2 border-slate-300 dark:border-d3 pt-2">
+          <div className=" ring-1d flex flex-col px-4 border-t-[1px] border-slate-300 dark:border-d3 pt-2">
             <ButtonSec onClick={loginWithGoogle}>Signin With Google</ButtonSec>
           </div>
         </div>

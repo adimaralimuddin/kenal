@@ -3,6 +3,7 @@ import useComment from "../../controls/useComment";
 import useReply from "../../controls/useReply";
 import useSettings from "../../controls/useSettings";
 import useUser from "../../controls/useUser";
+import ToolDateToDisplay from "../../controls/utils/toolDateToDisplay";
 import { useAlert } from "../elements/Alert";
 import EditHist from "../elements/EditHist";
 import Icon from "../elements/Icon";
@@ -91,7 +92,7 @@ function CommentItem({ data, onDelete, onUpdate, state, par }) {
       id={data?.id}
       onMouseEnter={(_) => setActive(true)}
       onMouseLeave={(_) => setActive(false)}
-      className="ring-1d p-0 m-0"
+      className=" "
     >
       <Verifier
         text="Are you sure to delete this comment?"
@@ -99,104 +100,107 @@ function CommentItem({ data, onDelete, onUpdate, state, par }) {
         set={setDeleting}
         onYes={onDeleteComment}
       />
-      <div className="py-3">
-        <div className=" -mb-5">
-          <UserItem
-            userId={data?.userId}
-            postUserSettings={state?.postUserSettings}
-            noName="on"
-            small="on"
-            className="px-0 py-0"
-          />
-        </div>
-        <div className="pt-4 px-1 w-full pl-4">
-          <div className="flex">
+      <div className="flex gap-1 flex-wrap items-start  ">
+        <UserItem
+          userId={data?.userId}
+          postUserSettings={state?.postUserSettings}
+          noName="on"
+          small="on"
+          className="px-0 py-0"
+        />
+        <div className="flex items-start ">
+          <div className="pt-4d px-1 w-full ">
             <PostBody
+              className=" ring-1d self-start p-0 px-0 rounded-lg bg-slate-100  ring-slate-200 dark:bg-slate-700   dark:text-slate-400 shadow-lgd shadow-slate-200 "
               header={
                 <UserItem
                   userId={data?.userId}
                   noImg="on"
-                  className="ring-1d my-0 py-0 "
+                  className=" my-0 py-0 "
                 />
               }
-              className=" bg-slate-100 dark:bg-d1 dark:text-slate-400"
               body={data?.body}
             >
               {viewEdit && (
                 <EditHist prev={data?.prev} date={data?.updatedAt} />
               )}
             </PostBody>
-            {active && user?.uid == data?.userId && (
-              <Option
-                className="pt-2 mx-2"
-                options={options}
-                authId={user?.uid}
-                userId={data?.userId}
-                onlyUser={true}
-              />
-            )}
-          </div>
-          <PostEditorMain
-            data={data}
-            open={open}
-            onUpdate={onUpdate}
-            setOpen={setOpen}
-          />
-          <ImgViewer className=" max-w-[450px] my-2" imgs={data?.images} />
-          <div className=" flex items-center pt-[1px]">
-            <LikeMain
-              size="1x"
+
+            <PostEditorMain
               data={data}
-              col_="comments"
-              likeActiveStyle="text-indigo-300 dark:text-indigo-400"
-              loveActiveStyle="text-pink-300 dark:text-pink-400"
+              open={open}
+              onUpdate={onUpdate}
+              setOpen={setOpen}
             />
-            {active && (
+            <ImgViewer className=" max-w-[450px] my-2" imgs={data?.images} />
+            <div className=" text-[.98rem] flex gap-2 items-center pt-1 font-medium text-slate-500">
+              <small className="text-[.7rem]">
+                {ToolDateToDisplay(data?.timestamp?.toDate())}
+              </small>
+              <LikeMain
+                col_="comments"
+                postId={data?.postId}
+                size={"1x"}
+                data={data}
+                noIcon={true}
+                likeActiveStyle="text-indigo-300 dark:text-indigo-400"
+                loveActiveStyle="text-pink-300 dark:text-pink-400"
+              />
               <button
                 className="flex items-center px-0 py-0"
                 onClick={(_) => setOpenComment((p) => !p)}
               >
-                <Icon size="1x">send-plane</Icon>
+                <small className="hover:underline dark:text-slate-400 font-medium">
+                  reply
+                </small>
               </button>
+            </div>
+            <ReplyMain
+              postId={data?.postId}
+              commentId={data?.id}
+              openReply={(replier) => {
+                if (replier?.[0] == user?.uid) {
+                  setReplyTo(null);
+                } else {
+                  setReplyTo(replier);
+                }
+                setOpenComment(false);
+                setTimeout(() => {
+                  setOpenComment(true);
+                }, 200);
+              }}
+            />
+            {openComment && (
+              <div className="py-2">
+                <Writer
+                  user={user}
+                  replyTo={replyTo}
+                  onPost={(data_, clear) =>
+                    addReply(
+                      {
+                        ...data_,
+                        postUserId: data?.postUserId,
+                        commentUserId: data?.userId,
+                        commentId: data?.id,
+                        postId: data?.postId,
+                      },
+                      clear
+                    )
+                  }
+                  onPostCaller={(_) => setOpenComment(false)}
+                  text="reply"
+                  div="ring-2d border-b-2 dark:border-slate-600 pb-3"
+                />
+              </div>
             )}
           </div>
-          <ReplyMain
-            postId={data?.postId}
-            commentId={data?.id}
-            openReply={(replier) => {
-              if (replier?.[0] == user?.uid) {
-                setReplyTo(null);
-              } else {
-                setReplyTo(replier);
-              }
-              setOpenComment(false);
-              setTimeout(() => {
-                setOpenComment(true);
-              }, 200);
-            }}
-          />
-          {openComment && (
-            <div className="py-2">
-              <Writer
-                user={user}
-                replyTo={replyTo}
-                onPost={(data_, clear) =>
-                  addReply(
-                    {
-                      ...data_,
-                      postUserId: data?.postUserId,
-                      commentUserId: data?.userId,
-                      commentId: data?.id,
-                      postId: data?.postId,
-                    },
-                    clear
-                  )
-                }
-                onPostCaller={(_) => setOpenComment(false)}
-                text="reply"
-                div="ring-1 rounded-md bg-gray-100 dark:bg-slate-600 dark:ring-0 ring-gray-200"
-              />
-            </div>
+          {user?.uid == data?.userId && (
+            <Option
+              options={options}
+              authId={user?.uid}
+              userId={data?.userId}
+              onlyUser={true}
+            />
           )}
         </div>
       </div>

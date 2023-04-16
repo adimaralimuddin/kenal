@@ -35,7 +35,7 @@ export default function StoryComments({ story, ind, total }) {
       ret1?.();
       ret?.();
     };
-  }, [ind, settings]);
+  }, [story(), ind, settings]);
 
   useEffect(() => {
     checkPrivacy();
@@ -43,7 +43,6 @@ export default function StoryComments({ story, ind, total }) {
 
   const checkPrivacy = async () => {
     const priv = await checkStoryCommentAllowPrivacy(story());
-    console.log("priv check ", priv);
     setPrivacy(priv);
     return priv;
   };
@@ -60,16 +59,16 @@ export default function StoryComments({ story, ind, total }) {
     }
   };
 
-  if (total == ind) return null;
+  if (total === ind) return null;
 
   return (
-    <div className="flex mx-2 flex-col flex-1 bg-white dark:bg-box-dark max-w-sm rounded-lg min-w-[250px] max-h-[90vh]">
+    <div className="flex flex-col flex-1 bg-white dark:bg-box-dark max-w-smd rounded-lg min-w-[250px] max-h-[90vh]">
       {privacy && (
         <div className="ring-1d w-full p-2">
           <Writer user={user} text="comment" onPost={onAddComment} />
         </div>
       )}
-      <div className="overflow-y-auto h-full p-2d py-2">
+      <div className="overflow-y-auto h-full p-2 ">
         {comments?.map((data) => (
           <StoryCommentItem
             par={[comments, setComments]}

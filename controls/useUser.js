@@ -14,19 +14,21 @@ import {
   serverTimestamp,
   setDoc,
 } from "firebase/firestore";
+import { useRouter } from "next/router";
 import create from "zustand";
 import { useAlert } from "../components/elements/Alert";
 import { auth, db } from "../firebase.config";
 import toolGetDoc from "./toolGetDoc";
-const store_ = create((set) => ({ loaded: false, set: (data) => set(data) }));
+const useStore = create((set) => ({ loaded: false, set: (data) => set(data) }));
 
 const userRef = (id) => doc(db, "users", id);
 const profileRef = (id) => doc(db, "profile", id);
 
 export default function useUser() {
-  const store = store_();
+  const store = useStore();
   const { set, user } = store;
   const { open, close, pop } = useAlert();
+  const router = useRouter();
 
   function listen() {
     const unsub = onAuthStateChanged(auth, async (usersnap) => {
@@ -82,6 +84,7 @@ export default function useUser() {
     }
     await signOut(auth);
     pop("loged out.");
+    router.replace("/");
   }
 
   async function LoginWIthEmail(email, password, passCaller, errorCaller) {
@@ -168,7 +171,7 @@ export default function useUser() {
 
     const profile = await setDoc(doc(db, "profile", user?.uid), {
       ...user?.providerData?.[0],
-      displayName: user?.displayName || user?.email,
+      displayName: user?.displayName || user?.email?.split("@")?.[0],
       joinedAt: new Date(),
       timestamp: serverTimestamp(),
     });
@@ -193,6 +196,27 @@ export default function useUser() {
         canChat: "Followers",
         // notification default setting
 
+        // ----------------------------------
+        // INSERTED NEW SETtings
+        notiffollowrelation: true,
+        notifreplyreply: true,
+
+        notifreactstory: true,
+        notifreactpost: true,
+        notifreactcomment: true,
+        notifreactstoryComments: true,
+        notifreactreply: true,
+        notifcommentstory: true,
+        notifcommentpost: true,
+
+        notifreplycomment: true,
+        notfreplyreply: true,
+
+        notifrequestmessage: true,
+        notifsharepost: true,
+        notiffollowprofile: true,
+
+        // -------------------------------------
         notifreactpost: true,
         notifcommentpost: true,
         notifsharepost: true,

@@ -6,6 +6,7 @@ import {
   where,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
+import useRelations from "../../controls/useRelations";
 import useSettings from "../../controls/useSettings";
 import useUser from "../../controls/useUser";
 import { db } from "../../firebase.config";
@@ -14,7 +15,9 @@ import UserSugItem from "../user/UserSugItem";
 export default function SuggestionMain() {
   const { user } = useUser();
   const { settings } = useSettings();
+  const x = useRelations();
   const [users, setUsers] = useState([]);
+  // console.log("relations", x);
 
   useEffect(() => {
     const blockedUsers = settings?.blockedusers;
@@ -33,14 +36,17 @@ export default function SuggestionMain() {
     return ret;
   }, [user, settings]);
 
+  if (!user) {
+    return null;
+  }
   return (
     <div className=" box">
       {users?.length != 0 && (
-        <h2 className="px-2 pb-3 pt-1 text-h2 font-semibold text-center ">
+        <h2 className="px-2 pb-3 pt-1 text-h2 font-semibold   text-slate-600 dark:text-slate-300">
           Suggested For You
         </h2>
       )}
-      <div className="flex-col flex gap-2">
+      <div className="flex-col flex gap-2 pt-2">
         {users?.map((user_) => (
           <UserSugItem data={user_} key={user_?.id} />
         ))}

@@ -41,10 +41,10 @@ function InputPrivacy({ onInput, defaultValue }) {
     },
   ];
   return (
-    <div className="flex items-center font-semibold rounded-xl bg-slate-100  dark:bg-slate-700 ">
+    <div className="flex items-center font-semibold rounded-xl bg-slate-100 hover:bg-slate-200  dark:bg-slate-700 dark:hover:bg-slate-600">
       <Option
         rightText={
-          <small className="flex items-center p-0 text-[13px] text-gray-500 ">
+          <small className="flex items-center p-0 text-[13px] text-slate-500 dark:text-slate-300">
             {val?.[0]?.replace("_", " ")}
             <Icon className="mx-1">arrow-down-s</Icon>
           </small>

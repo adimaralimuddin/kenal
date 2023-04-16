@@ -5,14 +5,30 @@ const ProfileMainNavs = () => {
   return (
     <div className="box p-0 px-4 flex gap-3 justify-around">
       <Menu
+        textClass="hidden sm:flex"
         tab={"posts"}
         tabText={"profileTab"}
         icon="home"
         defaultTab={"posts"}
       />
-      <Menu tab={"photos"} tabText={"profileTab"} icon="image" />
-      <Menu tab={"followers"} tabText={"profileTab"} icon="user" />
-      <Menu tab={"followings"} tabText={"profileTab"} icon="user" />
+      {/* <Menu
+        textClass="hidden sm:flex"
+        tab={"photos"}
+        tabText={"profileTab"}
+        icon="image"
+      /> */}
+      <Menu
+        textClass="hidden sm:flex"
+        tab={"followers"}
+        tabText={"profileTab"}
+        icon="user"
+      />
+      <Menu
+        textClass="hidden sm:flex"
+        tab={"followings"}
+        tabText={"profileTab"}
+        icon="user"
+      />
     </div>
   );
 };

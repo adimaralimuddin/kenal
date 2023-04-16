@@ -16,6 +16,7 @@ export default function MainLayout({ children, className, headerCss }) {
   }, []);
 
   useEffect(() => {
+    if (!user) return;
     const unsub = listenApp();
     return unsub;
   }, [user]);
@@ -28,7 +29,7 @@ export default function MainLayout({ children, className, headerCss }) {
   };
   return (
     <div
-      className={" min-h-[100vh] overflow-hidden flex flex-col " + className}
+      className={" min-h-[100vh] overflow-hidden flex flex-col  " + className}
     >
       <MainHeader className={headerCss} />
       {children}

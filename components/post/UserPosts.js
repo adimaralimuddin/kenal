@@ -1,4 +1,10 @@
-import { collection, onSnapshot, query, where } from "firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import useSettings from "../../controls/useSettings";
 import { db } from "../../firebase.config";
@@ -19,7 +25,8 @@ export default function UserPosts({
     if (!userId || !authId) return;
     const q = query(
       collection(db, "posts"),
-      where("userId", "array-contains-any", [userId])
+      where("userId", "array-contains-any", [userId]),
+      orderBy("timestamp", "desc")
     );
     onSnapshot(q, (snap) => {
       const posts = snap?.docs?.map((d) => ({ ...d?.data(), id: d?.id }));

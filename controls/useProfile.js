@@ -12,8 +12,10 @@ export default function useProfile() {
   const store = store_();
   const { set, data } = store;
 
-  async function update() {
-    await toolUpdatedoc("profile", user?.uid, { data });
+  async function update(profile) {
+    const updatedData = { ...profile?.data, ...data };
+    console.log("data", updatedData);
+    await toolUpdatedoc("profile", user?.uid, { data: updatedData });
   }
 
   return {

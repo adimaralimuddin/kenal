@@ -8,6 +8,8 @@ export default function ImgViewer({ imgs, className }) {
   const [src, setSrc] = useState(imgs?.[0]?.url);
   const vid = useRef();
 
+  const sortedImages = imgs?.sort((a, b) => a.ind - b.ind);
+
   useEffect(() => {
     setSrc(imgs?.[cur]?.url);
     if (vid?.current) {
@@ -55,14 +57,23 @@ export default function ImgViewer({ imgs, className }) {
             objectFit="cover"
             alt=""
           />,
-          <div className="h-full w-full">
+          <div
+            style={{
+              // backgroundImage: `url('hero-image.png')`,
+              background: `url('${imgs?.[ind]?.url}')`,
+            }}
+            className={"bg-slate-200 relative h-full w-full " + imgCss}
+          >
             <video
-              className={"h-[100%] w-[100%] m-auto object-cover  "}
+              className={
+                "absolute top-0 left-0 h-[100%] w-[100%] object-cover  "
+              }
               muted
               autoPlay={autoPlay}
               loop
+              src={imgs?.[ind]?.url}
             >
-              <source src={imgs?.[ind]?.url} />
+              {/* <source src={imgs?.[ind]?.url} /> */}
             </video>
           </div>,
           ind
@@ -118,7 +129,7 @@ export default function ImgViewer({ imgs, className }) {
           <div
             className={"flex gap-[1px] flex-col min-h-[350px]  " + className}
           >
-            <div className="flex-1 flex  min-h-[220px] max-h-[220px] gap-[1px] ">
+            <div className="flex-1 flex  min-h-[260px] max-h-[300px] gap-[1px] ">
               <Img ind={0} className="flex-1" />
               <div className="flex flex-col w-[40%]  gap-[1px] ">
                 <Img ind={1} />
@@ -134,7 +145,7 @@ export default function ImgViewer({ imgs, className }) {
       case 6:
         return (
           <div className={"flex flex-col   gap-[1px]  " + className}>
-            <div className="flex-1 flex min-h-[220px] max-h-[220px] gap-[1px] ">
+            <div className="flex-1 flex min-h-[300px] max-h-[320px] gap-[1px] ">
               <Img ind={0} className="flex-2" />
               <div className="flex flex-col w-[40%] gap-[1px] ">
                 <Img ind={1} />

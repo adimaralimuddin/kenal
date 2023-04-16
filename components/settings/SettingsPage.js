@@ -35,10 +35,10 @@ export default function SettingsPage({ mini = false }) {
 
   return (
     // <MainLayout>
-    <div className={"flex justify-center gap-4 " + (mini ? "flex-col" : "")}>
+    <div className={"flex  justify-center gap-4 " + (mini ? "flex-col" : "")}>
       <div
         className={
-          "box p-0 flex-[1]  flex  font-semibold text-slate-600 px-4 max-w-4xl " +
+          "box p-0 flex-[1] flex-wrap  flex  font-semibold text-slate-600 px-4 max-w-4xl " +
           (mini ? "" : " flex-col max-w-[300px] ")
         }
       >
@@ -82,7 +82,7 @@ function TabItem({ children, icon, active, set, mini }) {
     <button
       onClick={() => set(children)}
       className={
-        " flex items-center justify-center   py-3 rounded-none  " +
+        " flex items-center justify-center gap-2  py-3 rounded-none  " +
         (mini && " flex-1 ") +
         isActive(
           " border-primary-light dark:border-primary-dark text-primary-light dark:text-slate-100 " +
@@ -92,13 +92,11 @@ function TabItem({ children, icon, active, set, mini }) {
       }
     >
       <Icon
-        className={
-          "mx-2  " + isActive(" text-primary-light dark:text-slate-100 ")
-        }
+        className={" " + isActive(" text-primary-light dark:text-slate-100 ")}
       >
         {icon}
       </Icon>
-      {children}
+      <p className="text-sm hiddend sm:block">{children}</p>
     </button>
   );
 }

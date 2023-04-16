@@ -66,13 +66,12 @@ export default function useNotifs() {
       if (!payLoad?.id) {
         payLoad.id = docId + type;
       }
-      console.log("playload", payLoad);
 
       const result = await setDoc(doc(db, "notifs", payLoad.id), payLoad, {
         merge: true,
       });
     } else {
-      console.log("notif post is blocked");
+      console.log("notif post is blocked", notifSetting, userSettings);
     }
   }
 
@@ -82,7 +81,7 @@ export default function useNotifs() {
     });
   }
 
-  function seen(docId) {
+  function seenNotif(docId) {
     toolUpdatedoc("notifs", docId, { seen: true });
   }
 
@@ -98,7 +97,7 @@ export default function useNotifs() {
   return {
     ...store,
     listen,
-    seen,
+    seenNotif,
     notify,
     getNotifBadge,
     deleteNotif,

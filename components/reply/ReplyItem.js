@@ -1,6 +1,8 @@
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import useReply from "../../controls/useReply";
 import useUser from "../../controls/useUser";
+import ToolDateToDisplay from "../../controls/utils/toolDateToDisplay";
 import EditHist from "../elements/EditHist";
 import Icon from "../elements/Icon";
 import ImgViewer from "../elements/ImgViewer";
@@ -29,16 +31,18 @@ export default function ReplyItem({
 
   const onDeleteHandler = () => onDelete(data?.id);
 
+  const router = useRouter();
+
   useEffect(() => {
     checkPrivacy();
   }, [data]);
   async function checkPrivacy() {
     const privacy = await checkReplyPrivacy(data);
-    if (!privacy) {
-      setReplies((reps) => {
-        return reps?.filter((r) => r?.id !== data?.id);
-      });
-    }
+    // if (!privacy) {
+    //   setReplies((reps) => {
+    //     return reps?.filter((r) => r?.id !== data?.id);
+    //   });
+    // }
   }
 
   const options = [
@@ -62,13 +66,12 @@ export default function ReplyItem({
       action: () => setViewEdit((p) => !p),
     });
   }
-
   return (
     <div
       id={data?.id}
       onMouseEnter={(_) => setActive(true)}
       onMouseLeave={(_) => setActive(false)}
-      className="py-1"
+      // className={"py-1 " + (router.query?.actionId === data?.id && " ")}
     >
       <Verifier
         text="are you sure to delete this reply?"
@@ -97,7 +100,7 @@ export default function ReplyItem({
                 className="ring-1d py-0 "
               />
             }
-            className="bg-slate-100 dark:bg-d1 dark:text-slate-400"
+            className="bg-slate-100 dbg-white ring- ring-slate-200 shadow-lgd dark:bg-slate-700 dark:text-slate-400 shadow-slate-200"
           >
             {viewEdit && <EditHist prev={data?.prev} date={data?.updatedAt} />}
           </PostBody>
@@ -108,22 +111,29 @@ export default function ReplyItem({
             open={open}
             setOpen={setOpen}
           />
-          <div className="flex items-center">
+          <div className="flex items-center pt-2 gap-2 text-slate-500">
+            <small className="text-[.7rem]">
+              {ToolDateToDisplay(data?.timestamp?.toDate())}
+            </small>
             <LikeMain
-              data={data}
-              size="x1"
               col_="replies"
+              postId={data.postId}
+              data={data}
+              noIcon={true}
+              size="x1"
               likeActiveStyle="text-indigo-300 dark:text-indigo-400"
               loveActiveStyle="text-pink-300 dark:text-pink-400"
             />
-            {active && (
-              <button
-                className="flex items-center px-0 py-0"
-                onClick={(_) => openReply([data?.userId, profile?.userName])}
-              >
-                <Icon size="1x">send-plane</Icon>
-              </button>
-            )}
+            <button
+              className="flex items-center px-0 py-0"
+              onClick={(_) => {
+                openReply([data?.userId, profile?.displayName]);
+              }}
+            >
+              <small className="hover:underline dark:text-slate-400 font-medium">
+                reply
+              </small>
+            </button>
           </div>
         </div>
         {active && user?.uid == data?.userId && (

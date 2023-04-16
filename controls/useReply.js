@@ -1,4 +1,3 @@
-import { data } from "autoprefixer";
 import {
   collection,
   onSnapshot,
@@ -19,7 +18,7 @@ import useUser from "./useUser";
 export default function useReply(commentId, postId) {
   const { user } = useUser();
   const [replies, setReplies] = useState([]);
-  const { addNotif, notify } = useNotifs();
+  const { notify } = useNotifs();
   const { settings, getUserSettings } = useSettings();
 
   useEffect(() => {
@@ -34,7 +33,7 @@ export default function useReply(commentId, postId) {
         blockedUsers?.length != 0 ? blockedUsers : ["xxxxxxxxxxxxxxxxxxxxx"]
       ),
       orderBy("userId", "asc"),
-      orderBy("timestamp", "desc")
+      orderBy("timestamp", "asc")
     );
     onSnapshot(q, (snap) => {
       setReplies(snap?.docs?.map((d) => ({ ...d.data(), id: d.id })));
@@ -42,7 +41,6 @@ export default function useReply(commentId, postId) {
   }, [commentId, settings]);
 
   async function addReply(data_, clear) {
-    console.log("reps data = ", data_);
     const data = {
       commentId,
       postId: data_?.postId,
@@ -54,8 +52,6 @@ export default function useReply(commentId, postId) {
     if (data_?.replyTo) {
       data.replyTo = data_.replyTo;
     }
-
-    console.log("rep data = ", data);
 
     const addedReply = await toolPostAdder(data, data_?.imgs, "replies", () => {
       clear();
@@ -74,24 +70,21 @@ export default function useReply(commentId, postId) {
         text: data?.body,
         id: addedReply.id,
       });
-      // addNotif(
-      //   data_.commentUserId,
-      //   user.uid,
-      //   "reply-comment",
-      //   data_?.postId,
-      //   data_?.commentId
-      // );
     }
 
     if (data?.replyTo) {
-      console.log("have to mentionsed ", data?.replyTo);
-      addNotif(
-        data?.replyTo?.[0],
-        user?.uid,
-        "mention",
-        data_?.postId,
-        data_?.commentId
-      );
+      notify({
+        to: data?.replyTo?.[0],
+        from: user.uid,
+        docId: data_?.postId,
+        notif: "reply",
+        type: "reply",
+        subtype: "reply",
+        msg: "reply on your reply.",
+        actionId: data_?.commentId,
+        text: data?.body,
+        id: addedReply.id,
+      });
     }
   }
 

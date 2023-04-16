@@ -47,7 +47,7 @@ export default function StoryItem({ data, onOpen, ind }) {
           data?.images?.[0]?.url || "/img/storybg1.webp"
         }")`,
       }}
-      className="min-w-[85px]  transition flex-1 cursor-pointer overflow-hidden bg-center bg-cover bg-no-repeat text-white p-1 flex flex-col  justify-between items-center content-center text-center rounded-xl h-full  max-w-[100px] relative"
+      className="min-w-[100px]  transition flex-1 cursor-pointer overflow-hidden bg-center bg-cover bg-no-repeat text-white p-1 flex flex-col  justify-between items-center content-center text-center rounded-xl h-full  max-w-[110px] relative"
     >
       <UserItem
         pop={false}

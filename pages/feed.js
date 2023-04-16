@@ -3,7 +3,7 @@ import MainLayout from "../components/main/MainLayout";
 
 export default function feed() {
   return (
-    <MainLayout headerCss=" transition-500 ">
+    <MainLayout headerCss="  ">
       <MainContent />
     </MainLayout>
   );

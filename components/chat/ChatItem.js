@@ -1,7 +1,8 @@
-import { useState } from "react";
-import useChat from "../../controls/useChat";
+import { useEffect, useState } from "react";
+import useChatMutator from "../../controls/chats/useChatMutator";
 import useUser from "../../controls/useUser";
-import Avatar from "../elements/Avatar";
+import ToolDateToDisplay from "../../controls/utils/toolDateToDisplay";
+import Icon from "../elements/Icon";
 import ImgViewer from "../elements/ImgViewer";
 import PostBody from "../elements/PostBody";
 import LikeMain from "../reactions/LikeMain";
@@ -10,68 +11,38 @@ import UserItem from "../user/UserItem";
 export default function ChatItem({ data }) {
   const { user } = useUser();
   const [active, setActive] = useState(false);
-  const chat = useChat();
+  const { seenChat } = useChatMutator();
 
-  // console.log("chat", data);
-
-  const mine = (a = true, b = false) =>
-    data?.userId?.[0] == user?.uid ? a : b;
+  const mine = (a = true, b = false) => (data?.userId == user?.uid ? a : b);
 
   const isSeen = (a = true, b = false) => (data.seen ? a : b);
+  const displayDate = () => ToolDateToDisplay(data.timestamp?.toDate());
 
-  const getDate = (date, msg = "ago") => {
-    if (!date) return "";
-    const now = new Date();
-    const yearDif = now.getFullYear() - date.getFullYear();
-    const monthDif = now.getMonth() - date.getMonth();
-    const dayDif = Math.abs(now.getDay() - date.getDay());
-    const hourDif = Math.abs(now.getHours() - date.getHours());
-    const minDif = Math.abs(now.getMinutes() - date.getMinutes());
-    const secDif = Math.abs(now.getSeconds() - date.getSeconds());
-    console.log({ hourDif, minDif: minDif, secDif });
-
-    if (yearDif > 0) {
-      return yearDif + ` year${yearDif !== 1 ? "s" : ""} ` + msg;
-    }
-    if (monthDif > 0) {
-      return monthDif + ` month${monthDif !== 1 ? "s" : ""} ` + msg;
-    }
-    if (dayDif > 0) {
-      return dayDif + ` day${dayDif !== 1 ? "s" : ""} ` + msg;
-    }
-    if (hourDif > 0) {
-      return hourDif + ` hour${hourDif !== 1 ? "s" : ""} ` + msg;
-    }
-    if (minDif > 0) {
-      return minDif + ` minute${minDif !== 1 ? "s" : ""} ` + msg;
-    }
-    return secDif + ` second${secDif !== 1 ? "s" : ""} ` + msg;
-  };
+  useEffect(() => {
+    seenChat(data);
+  }, [data]);
 
   return (
     <div
       onMouseEnter={(_) => setActive(true)}
       onMouseLeave={(_) => setActive(false)}
-      className={"flex  flex-col "}
+      className={"flex  flex-col ring-1d "}
     >
-      <div className={"flex  " + mine("", " flex-row-reverse")}>
+      <div className={"flex gap-1  " + mine("", " flex-row-reverse")}>
         {!data?.isContinue && (
           <UserItem
-            userId={data?.userId?.[0]}
+            userId={data?.userId}
             noName={true}
             small={true}
             size={20}
           ></UserItem>
         )}
         {data?.isContinue && <div className="min-w-[40px]"></div>}
-        {/* <Avatar/> */}
         {data?.body && (
           <PostBody
-            // par={mine("items-start", " items-end")}
             body={data?.body}
-            // data={data}
             className={
-              "mt-1 bg-slate-50d dark:bg-slate-600d  ring-1d shadow-lg shadow-indigo-200 dark:shadow-slate-800 text-whited " +
+              "mt-1  shadow-lg shadow-indigo-200 dark:shadow-slate-800 " +
               mine(
                 " bg-blue-400 text-white  -50 ring-blue-200 rounded-tl-xl dark:bg-blue-900 dark:text-slate-300",
                 "text-slate-500 rounded-tr-xl bg-slate-50d bg-white ring-gray-200 dark:bg-slate-700 dark:text-slate-300  "
@@ -80,8 +51,6 @@ export default function ChatItem({ data }) {
           ></PostBody>
         )}
       </div>
-      {/* last: {data?.last?.toString()} */}
-      {/* isContinue: {data?.isContinue?.toString()} */}
       <ImgViewer
         imgs={data?.images}
         className="bg-white p-2 rounded-xl shadow-lg shadow-slate-300 dark:shadow-black mt-2"
@@ -89,15 +58,35 @@ export default function ChatItem({ data }) {
       {data?.last && (
         <div
           className={
-            " flex flex-col min-h-[50px] ring-1 ring-transparent " +
-            mine("", " items-end ")
+            " flex flex-cold items-center min-h-[35px] " +
+            mine("", " justify-start flex-row-reverse ")
           }
         >
-          <small className="text-slate-400 text-[.7rem] px-2">
-            seen {data?.createdAt && getDate(data.createdAt?.toDate())}
+          <small className="text-slate-400 text-[.7rem] px-2 flex gap-1">
+            {data?.seen && (
+              <span className="flex ring-1d text-indigo-300 dark:text-blue-400">
+                seen
+                <Icon
+                  className=" text-indigo-300 dark:text-indigo-400"
+                  size={20}
+                >
+                  check
+                </Icon>
+              </span>
+            )}
+            <span>{displayDate()}</span>
           </small>
+
           {active && (
-            <LikeMain data={data} col_="messages" small="on" className="pt-1" />
+            <LikeMain
+              docId={data?.id}
+              data={data}
+              postId={data?.id}
+              col_="messages"
+              small="on"
+              className="pt-1 "
+              noNotif={true}
+            />
           )}
         </div>
       )}

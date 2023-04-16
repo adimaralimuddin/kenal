@@ -1,12 +1,18 @@
 import React from "react";
+import useNotifs from "../../../controls/useNotifs";
 import UserConfirmItem from "../userConfirmItem/UserConfirmItem";
 
-const test = [1, 2];
 const UserConfirmLIsts = () => {
+  const { notifs } = useNotifs();
+  const filteredNotifs = notifs?.filter(
+    (n) => n.type == "relation" && !n.confirmed
+  );
+
+  if (filteredNotifs?.length == 0) return null;
   return (
     <div className="flex flex-col gap-3 ">
-      {test?.map((i) => (
-        <UserConfirmItem key={i} />
+      {filteredNotifs?.map((notif) => (
+        <UserConfirmItem notif={notif} key={notif?.id} />
       ))}
     </div>
   );

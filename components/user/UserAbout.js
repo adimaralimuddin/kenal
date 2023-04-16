@@ -14,7 +14,7 @@ export default function UserAbout({ profile, authId, profileSettings }) {
   const { isFollowings } = useRelations();
 
   const onUpdate = async () => {
-    await update();
+    await update(profile);
     setOpen(false);
   };
 
@@ -37,9 +37,9 @@ export default function UserAbout({ profile, authId, profileSettings }) {
   return (
     <div className="flex-1 text-gray-500  min-w-[35%] ">
       <div className="box box-ringd text-sm ">
-        <h2 className=" text-h2 font-medium text-[1.1rem] px-3">About</h2>
-        <div className=" flex gap-3">
-          <div className="p-2 flex-1">
+        <h2 className=" text-h2 font-medium text-[1.1rem] px-3 ">About</h2>
+        <div className=" flex gap-3 flex-wrap ">
+          <div className="p-2 flex-1d ">
             {Object.entries(profile?.data || {})?.map((f) => (
               <p className="" key={f?.[0]}>
                 {f?.[0]} : <span className="ml-2  text-blue-400">{f?.[1]}</span>
@@ -52,7 +52,7 @@ export default function UserAbout({ profile, authId, profileSettings }) {
           </div>
           {profile?.id == authId && (
             <button
-              className="btn-prime self-end"
+              className="btn-prime ml-auto self-end"
               onClick={(_) => setOpen(true)}
             >
               Edit About

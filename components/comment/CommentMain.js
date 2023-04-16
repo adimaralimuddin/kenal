@@ -36,17 +36,19 @@ export default function CommentMain({
     setPrivacy(privacy_);
   }, [postUserId, relations, postUserSettings]);
 
+  const commentLength = () => (isNaN(comments?.length) ? 0 : comments?.length);
+
   return (
-    <div className="pt-2  px-1">
+    <div className="pt-2 flex flex-col gap-3d  px-1 ">
       <p
         onClick={(_) => setOpen((p) => !p)}
-        className=" cursor-pointer text-end px-3 text-sm float-right text-gray-400 -mt-7 "
+        className="ml-auto cursor-pointer text-end px-3 text-sm float-right text-gray-400 -mt-7 "
       >
         {open
-          ? comments?.length + " comments"
-          : comments?.length <= 2
-          ? comments?.length + " comments"
-          : comments?.length - 2 + " more comments"}
+          ? commentLength() + " comments"
+          : commentLength() <= 2
+          ? commentLength() + " comments"
+          : commentLength() - 2 + " more comments"}
       </p>
       {open && privacy && (
         <Writer
@@ -54,13 +56,14 @@ export default function CommentMain({
           onPost={(data, clear) => {
             addComment({ ...data, postId, postUserId }, clear);
           }}
+          className=""
           text="comment"
           user={user}
           userProfile={userProfile}
         />
       )}
       {open && (
-        <div className=" w-full">
+        <div className=" w-full flex flex-col gap-2 px-1 ">
           {comments?.map((comment) => (
             <CommentItem
               par={[comments, setComments]}
@@ -73,7 +76,7 @@ export default function CommentMain({
         </div>
       )}
       {!open && comments?.length > 2 && (
-        <div className=" w-full pt-2">
+        <div className="  flex-1 pt-2 px-1">
           {comments
             ?.filter((x, i) => i <= 1)
             ?.map((comment) => (

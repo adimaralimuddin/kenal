@@ -1,13 +1,9 @@
-import Image from "next/image";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import usePost from "../../controls/usePost";
 import useSettings from "../../controls/useSettings";
 import useUser from "../../controls/useUser";
 import { toolAutoGrow } from "../../tools/toolUi";
 import { useAlert } from "../elements/Alert";
-import Avatar from "../elements/Avatar";
-import Box from "../elements/Box";
-import ButtonPrimary from "../elements/ButtonPrim";
 import Icon from "../elements/Icon";
 import ImgEditor from "../elements/ImgEditor";
 import ImgInput from "../elements/ImgInput";
@@ -16,14 +12,16 @@ import Modal from "../elements/Modal";
 import UserItem from "../user/UserItem";
 
 export default function PostAdder({ className, to }) {
-  const { user, userProfile, ...xxx } = useUser();
+  const { user, userProfile } = useUser();
   const { settings } = useSettings();
-  const { set, body, addPost, imgs, loading, vids, uploadVids } = usePost();
+  const { set, addPost, imgs, loading, vids } = usePost();
   const { open, pop } = useAlert();
   const [isOpen, setIsOpen] = useState(false);
-  const [toUploadvids, setToUploadvids] = useState(false);
+  const bodyRef = useRef(null);
 
   const onPost = () => {
+    const body = bodyRef?.current?.value;
+    if (!body) return;
     if (body?.trim() === "") {
       return open("Post's body must not be empty!");
     }
@@ -38,7 +36,7 @@ export default function PostAdder({ className, to }) {
       open("Adding post . . . ", true);
     }
 
-    addPost(to !== user?.uid && to, () => {
+    addPost(to !== user?.uid && to, body, () => {
       if (vids) {
         set({ uploadVids: true });
       } else {
@@ -57,19 +55,13 @@ export default function PostAdder({ className, to }) {
         onClick={() => setIsOpen(true)}
       >
         <UserItem userId={user?.uid} noName={true} />
-        {/* <Avatar size={30} src={userProfile?.photoURL} /> */}
-        <p className="text-slate-500 dark:text-slate-200 px-2">
-          anything on your mind?
+        <p className="text-slate-600 dark:text-slate-400 font-medium px-2">
+          Anything On Your Mind?
         </p>
-        {/* <input
-          className="flex-1 h-full max-h-full"
-          onFocus={() => setIsOpen(true)}
-          type="text"
-        /> */}
       </div>
       <Modal open={isOpen} set={setIsOpen}>
         <div className="box flex-1 p-6 flex flex-col">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap">
             <UserItem userId={user?.uid}></UserItem>
             <InputPrivacy
               onInput={(privacy) => set({ privacy })}
@@ -78,23 +70,24 @@ export default function PostAdder({ className, to }) {
           </div>
           <div className="flex flex-1 flex-col py-3">
             <textarea
+              ref={bodyRef}
               onKeyUp={toolAutoGrow}
-              value={body}
-              onChange={(e) => set({ body: e.target.value })}
+              autoFocus={true}
               placeholder="Write Something..."
-              className="flex-1 resize-none px-2 ring-1d text-gray-500 dark:text-gray-200 bg-transparent text-xl font-medium max-h-[300px]"
+              className="flex-1 resize-none px-2 ring-1d text-slate-600 dark:text-gray-200 bg-transparent text-lg font-medium max-h-[300px]"
             />
           </div>
-          <div className="flex text-[1.5rem] items-center justify-end px-1 text-gray-500 gap-4">
-            <ImgInput set={set}>
-              <Icon>image-add</Icon>
-              {/* <Image src="/img/image.png" height={29} width={29} /> */}
-            </ImgInput>
+          <div className="flex text-[1.5rem] items-center justify-end px-1 text-gray-500 gap-4 flex-wrap">
             <ImgInput set={set}>
               <Icon>video-add</Icon>
-              {/* <Image src="/img/video.png" height={29} width={29} /> */}
             </ImgInput>
-            <button onClick={onPost} className="btn-prime font-medium text-lg">
+            <ImgInput set={set}>
+              <Icon>image-add</Icon>
+            </ImgInput>
+            <button
+              onClick={onPost}
+              className="btn-prime whitespace-nowrap font-medium text-lg px-6"
+            >
               Post It!
             </button>
           </div>
@@ -102,7 +95,7 @@ export default function PostAdder({ className, to }) {
         </div>
       </Modal>
       <Modal open={loading}>
-        <Box>please wait ...</Box>
+        <div className="box">please wait ...</div>
       </Modal>
     </div>
   );

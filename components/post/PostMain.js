@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import ChatsSideBar from "../chat/ChatsSideBar";
+import React from "react";
 import MessagesAll from "../messages/messagesAll/MessagesAll";
 import StoryMain from "../story/StoryMain";
 import SuggestionMain from "../suggestions/SuggestionMain";
@@ -15,10 +14,9 @@ const PostMain = () => {
         <PostAdder />
         <Posts />
       </div>
-      <div className=" w-[30%] hidden md:flex flex-col gap-4 max-w-[290px] bg-whited rounded-xl">
+      <div className=" w-[35%] hidden md:flex flex-col gap-4 max-w-[290px] bg-whited rounded-xl dlg:min-w-[300px] dring-1">
         <UserConfirmLIsts />
-        <MessagesAll />
-        <ChatsSideBar />
+        <MessagesAll showMenu={false} />
         <SuggestionMain />
       </div>
     </div>

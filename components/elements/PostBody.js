@@ -13,14 +13,12 @@ export default function PostBody({
     <div className={" flex flex-col  " + par}>
       <div
         className={
-          " text-sm  dark:ring-0 px-3  p-3 rounded-3xl min-w-[100px] " +
+          " text-sm text-slate-600  font-normal px-3   py-2 rounded-2xl min-w-[100px] " +
           className
         }
       >
         {header}
-        {/* <UserItem userId={replyTo?.[0]} noImg={"on"} par=" -top-14 pt-6"> */}
-        <p className={"text-sm inlined text-start leading-4 "}> {body}</p>
-        {/* </UserItem> */}
+        <p className={"text-sm inlined text-start leading-4d  "}> {body}</p>
         {children}
       </div>
     </div>

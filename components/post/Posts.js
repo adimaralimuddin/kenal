@@ -23,12 +23,9 @@ export default function Posts() {
   }, [isBottomScreen]);
 
   useEffect(() => {
-    if (user) {
-    }
+    if (!user) return;
     const ret = initPosts();
-    return () => {
-      ret?.();
-    };
+    return ret;
   }, [user, settings]);
 
   const totalPosts = posts?.sort(

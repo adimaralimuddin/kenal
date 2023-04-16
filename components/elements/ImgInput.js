@@ -14,14 +14,15 @@ export default function ImgInput({
     let pass = true;
 
     Array.from(e.target?.files)?.map((f) => {
-      if (f?.size > 3000000) {
+      if (f?.size > 4000000) {
         pass = false;
-        return open("the file must not exceed 3MB. " + f?.name);
+        return open("the file must not exceed 4MB. " + f?.name);
       }
     });
 
     if (!pass) return;
-    const files = Array.from(e.target?.files)?.map((y) => ({
+    const files = Array.from(e.target?.files)?.map((y, i) => ({
+      i,
       url: URL.createObjectURL(y),
       type: y?.type,
       file: y,
@@ -30,8 +31,8 @@ export default function ImgInput({
     if (files?.length >= 8) {
       return open("allowed upload upto 8 files only!");
     }
-
-    set?.({ [name]: files });
+    const sortedFiles = files?.sort((a, b) => b.i - a.i);
+    set?.({ [name]: sortedFiles });
     onInput(files);
   }
 

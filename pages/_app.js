@@ -1,6 +1,7 @@
-import "../styles/globals.css";
-import ChatMain from "../components/chat/ChatMain";
 import { ThemeProvider } from "next-themes";
+import ChatMain from "../components/chat/ChatMain";
+import Alert from "../components/elements/Alert";
+import "../styles/globals.css";
 
 function MyApp({ Component, pageProps }) {
   return (
@@ -8,6 +9,7 @@ function MyApp({ Component, pageProps }) {
       <ThemeProvider enableSystem={true} attribute="class">
         <Component {...pageProps} />
         <ChatMain />
+        <Alert />
       </ThemeProvider>
     </>
   );

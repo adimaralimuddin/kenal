@@ -7,7 +7,7 @@ const GroupChatCreatorButton = ({ set }) => {
   return (
     <div className="flex gap-2 items-center">
       <ButtonPrim onClick={() => set(true)} icon="add">
-        Create Group Chat
+        Group Chat
       </ButtonPrim>
     </div>
   );

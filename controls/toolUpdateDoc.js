@@ -17,13 +17,11 @@ export default async function toolUpdatedoc(
 ) {
   try {
     const { images, imgLength, ...postData } = data;
-
-   const result= await updateDoc(doc(db, col_, docId), {
+    const result = await updateDoc(doc(db, col_, docId), {
       ...postData,
       updatedAt: serverTimestamp(),
     });
-    console.log("doc updated");
-    caller?.();
+    caller && caller?.(result);
 
     if (images) {
       console.log("has imgs ", images);

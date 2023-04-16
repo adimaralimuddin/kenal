@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import useChatMutator from "../../../controls/chats/useChatMutator";
 import UserLists from "../../user/UserLists";
 
-const MessageCreatorUsers = ({ users, setUsers }) => {
+const MessageCreatorUsers = ({ users, setUsers, setOpen }) => {
   const { createPrivateConverse } = useChatMutator();
   const onChatHandler = (user) => {
-    console.log("user", user);
     createPrivateConverse({ user });
+    setOpen(false);
   };
   return (
     <div>
@@ -14,7 +14,7 @@ const MessageCreatorUsers = ({ users, setUsers }) => {
         title="find someone to chat with 😊"
         users={users}
         setUsers={setUsers}
-        icon="chat-3"
+        icon="add"
         onUserSelect={onChatHandler}
       />
     </div>

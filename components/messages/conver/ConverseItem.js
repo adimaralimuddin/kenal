@@ -1,14 +1,15 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import useMiniChat from "../../../controls/chats/miniChat/useMiniChat";
+import useChatListeners from "../../../controls/chats/useChatListeners";
 import toolGetDoc from "../../../controls/toolGetDoc";
-import useChat from "../../../controls/useChat";
 import useUser from "../../../controls/useUser";
+import ToolTextWrapper from "../../../controls/utils/toolTextWrapper";
 import Avatar from "../../elements/Avatar";
 import Avatars from "../../elements/Avatars";
 import Badge from "../../elements/Badge";
 import IconBtn from "../../elements/IconBtn";
-import PrivacyIcon from "../../elements/PrivacyIcon";
 import UserItem from "../../user/UserItem";
 
 const ConverseItem = ({
@@ -21,9 +22,12 @@ const ConverseItem = ({
 }) => {
   const { user } = useUser();
   const router = useRouter();
-  const chat = useChat();
+  const { listenConverseChat } = useChatListeners();
+  const chat = useMiniChat();
   const [chats, setChats] = useState([]);
-  const notifs = chats?.filter((c) => c?.seen === false);
+  const notifs = chats?.filter(
+    (c) => c?.seen === false && c?.userId !== user?.uid
+  );
   const onSelectHandler = () => {
     onClick && onClick(conver);
   };
@@ -42,7 +46,7 @@ const ConverseItem = ({
     if (conver?.type === "private") {
       toolGetDoc("profile", toUserId(), setToUser);
     }
-    const unsub = chat.listenConverseCat(conver, setChats, false);
+    const unsub = listenConverseChat(conver, setChats);
     return unsub;
   }, [conver, user]);
 
@@ -56,7 +60,7 @@ const ConverseItem = ({
     <Link href={{ query }} scroll={false}>
       <div
         onClick={onSelectHandler}
-        className=" flex flex-col gap-1 justify-between  flex-1   "
+        className=" flex flex-col gap-1 justify-between  "
       >
         <div className="group relative flex flex-1 rounded-lg items-center gap-1 hover:bg-slate-100 dark:hover:bg-slate-600 cursor-pointer">
           <Badge className="-left-2 -top-5 " value={notifs?.length} />
@@ -67,16 +71,16 @@ const ConverseItem = ({
               noName={true}
               after={
                 <div className="leading-4 px-1">
-                  <h3 className="text-[0.9rem] font-medium  ">
+                  <h3 className="text-[0.9rem] font-medium dark:text-slate-400 ">
                     {isPrivate(toUser?.displayName, conver?.name)}
                   </h3>
-                  <small className="text-slate-400">
+                  <small className="text-slate-400 whitespace-nowrap">
                     {conver?.lastUserId === user?.uid && (
                       <span className="pr-1 text-indigo-400 font-medium">
                         You:
                       </span>
                     )}
-                    {conver?.lastChatBody}
+                    {ToolTextWrapper(conver?.lastChatBody, 35)}
                   </small>
                 </div>
               }
@@ -94,7 +98,7 @@ const ConverseItem = ({
 
           <div className="flex-1 flex gap-1 items-center overflow-hidden">
             {conver?.type === "group" && (
-              <div className="leading-4 px-1">
+              <div className="leading-4 px-1 whitespace-nowrap overflow-hidden">
                 <h3 className="text-[0.9rem] font-medium  ">
                   {isPrivate(toUser?.displayName, conver?.name)}
                 </h3>
@@ -108,21 +112,18 @@ const ConverseItem = ({
                 </small>
               </div>
             )}
-            {!noIcon && conver?.type === "group" && (
-              <PrivacyIcon size={20} privacy={conver?.privacy} />
-            )}
+
             {!noMembers && conver?.type === "group" && (
-              <small className="whitespace-nowrap">
+              <small className="whitespace-nowrap pr-2 ">
                 ({conver?.members?.length})
               </small>
             )}
           </div>
-          <div className="px-1 flex items-center ">
+          <div className="px-1 flex items-center absolute right-0 ">
             {allowMiniChat && (
               <IconBtn
                 onClick={(e) => {
                   e.stopPropagation();
-                  console.log("selected converse", conver);
                   chat.openMiniConverse(conver);
                 }}
                 className="group-hover:visible invisible"

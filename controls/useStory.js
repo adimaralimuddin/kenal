@@ -14,12 +14,14 @@ import toolGetDocs from "./toolGetDocs";
 import toolPostAdder from "./toolPostAdder";
 import toolRemoveDoc from "./toolRemoveDoc";
 import toolUpdatedoc from "./toolUpdateDoc";
+import useNotifs from "./useNotifs";
 import useRelations from "./useRelations";
 import useSettings from "./useSettings";
 import useUser from "./useUser";
 
 const store_ = create((set) => create({ body: "", set: (data) => set(data) }));
 export default function useStory() {
+  const { notify } = useNotifs();
   const { user } = useUser();
   const { settings, getUserSettings } = useSettings();
   const store = store_();
@@ -39,7 +41,7 @@ export default function useStory() {
         blockedLists?.length != 0 ? blockedLists : ["xxxxxxxxxx"]
       ),
       limit(4),
-      orderBy("userId", "asc"),
+      orderBy("userId", "desc"),
       orderBy("timestamp", "desc")
     );
     const ret = onSnapshot(q, (snap) => {
@@ -97,7 +99,7 @@ export default function useStory() {
       viewers: [],
       privacy: data_?.privacy,
     };
-    console.log("data ", data);
+    // console.log("data ", data);
     if (data_?.imgs && data_?.imgs?.length == 0) {
       data.images = [
         {
@@ -128,13 +130,30 @@ export default function useStory() {
   }
 
   async function addStoryComment(data_) {
+    console.log("addstorycomment data:", data_);
     const data = {
       storyId: data_?.story?.id,
       storyUserId: data_?.story?.userId,
       userId: user?.uid,
       body: data_?.body,
     };
-    await toolPostAdder(data, data_?.imgs, "storyComments");
+    const addedComment = await toolPostAdder(
+      data,
+      data_?.imgs,
+      "storyComments"
+    );
+    notify({
+      to: data_?.story?.userId,
+      from: user?.uid,
+      docId: data_?.story?.id,
+      notif: "comment",
+      type: "story",
+      subtype: "comment",
+      msg: "comment on your story.",
+      actionId: addedComment.id,
+      text: data_?.body,
+      id: data_?.story?.id + addedComment.id,
+    });
   }
 
   function listenStoryComments({ storyId, blockedUsers }, caller) {
@@ -158,9 +177,14 @@ export default function useStory() {
     return await toolRemoveDoc("storyComments", storyId);
   }
 
-  async function storyCommentUpdate(prev, body, images, docId) {
-    console.log(prev, body, images, docId);
-    await toolUpdatedoc("storyComments", docId, { prev, body, images });
+  async function storyCommentUpdate(prev, body, images, commentData) {
+    console.log({ prev, body, images, docId: commentData?.id });
+    // await toolUpdatedoc('storyComments',docId)
+    await toolUpdatedoc("storyComments", commentData?.id, {
+      prev,
+      body,
+      images,
+    });
   }
 
   async function storyUpdate(
@@ -188,7 +212,6 @@ export default function useStory() {
   }
 
   function checkRelations(userId, privacy) {
-    console.log("privacy", privacy);
     if (privacy == "Followers") {
       return isFollowing(userId, relations);
     } else if (privacy == "Public") {

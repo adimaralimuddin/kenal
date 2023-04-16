@@ -8,6 +8,7 @@ import NotifItemLikePost from "./NotifItemLikePost";
 import NotifItemMessageRequest from "./NotifItemMessageRequest";
 import NotifPost from "./notifPosts/NotifPost";
 import NotifProfile from "./notifProfiles/NotifProfile";
+import NotifRelations from "./notifRelations/NotifRelations";
 
 export default function NotifItem({ notif }) {
   switch (notif?.type) {
@@ -17,10 +18,16 @@ export default function NotifItem({ notif }) {
       return <NotifProfile notif={notif} />;
     case "post":
       return <NotifPost notif={notif} />;
+    case "story":
+      return <NotifPost notif={notif} />;
+    case "storyComments":
+      return <NotifPost notif={notif} />;
     case "comment":
       return <NotifPost notif={notif} />;
     case "reply":
       return <NotifPost notif={notif} />;
+    case "relation":
+      return <NotifRelations notif={notif} />;
     // case "chat":
     //   return <NotifItemChat notif={notif} />;
     // case "follow":
@@ -29,13 +36,10 @@ export default function NotifItem({ notif }) {
     //   return <NotifItemLikePost notif={notif} />;
     default:
       return (
-        <div>
-          type: {notif?.type}
-          <NotifItemDiv
-            notif={notif}
-            msg={`type: ${notif?.type} / subtype: ${notif?.subtype} / notif: ${notif?.notif}`}
-          />
-        </div>
+        <NotifItemDiv
+          notif={notif}
+          msg={`type: ${notif?.type} / subtype: ${notif?.subtype} / notif: ${notif?.notif}`}
+        />
       );
   }
 }

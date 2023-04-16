@@ -9,19 +9,28 @@ const NotifPost = ({ notif }) => {
   const msg = () => {
     switch (subtype) {
       case "like":
-        return `like your ${type}.`;
+        return `like your ${msgType()}.`;
       case "unlike":
-        return `dislike your ${type}.`;
+        return `dislike your ${msgType()}.`;
       case "love":
-        return `love your ${type}.`;
+        return `love your ${msgType()}.`;
       case "unlove":
-        return `don't love your ${type}.`;
+        return `don't love your ${msgType()}.`;
       case "comment":
-        return `comment on your ${type}.`;
+        return `comment on your ${msgType()}.`;
       case "reply":
-        return `reply on your ${type}.`;
+        return `reply on your ${msgType()}.`;
       default:
         return `type: ${type} subtype: ${subtype} your post`;
+    }
+  };
+
+  const msgType = () => {
+    switch (type) {
+      case "storyComments":
+        return "comment on a story.";
+      default:
+        return type;
     }
   };
 
@@ -40,14 +49,23 @@ const NotifPost = ({ notif }) => {
     }
   };
 
+  const tabType = () => {
+    switch (type) {
+      case "story":
+        return "storyitem";
+      case "storyComments":
+        return "storyitem";
+      default:
+        return "postitem";
+    }
+  };
+
   return (
     <Link
       href={{
         query: {
           ...router.query,
-          tab: "explore",
-          exploreTab: "posts",
-          exploreSubTab: "post",
+          tab: tabType(),
           postId: notif?.docId,
           actionId: notif?.actionId,
         },

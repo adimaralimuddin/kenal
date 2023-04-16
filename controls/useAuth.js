@@ -4,11 +4,11 @@ import { auth, db } from "../firebase.config";
 
 export async function test() {
   const provider = new GoogleAuthProvider();
-  const x = await signInWithPopup(auth, provider);
-  const user = x?.user;
+  const authResult = await signInWithPopup(auth, provider);
+  const user = authResult?.user;
   if (user) {
-    const y = await getDoc(doc(db, "users", user?.uid));
-    if (!y?._document) {
+    const userDoc = await getDoc(doc(db, "users", user?.uid));
+    if (!userDoc?._document) {
       const user_ = await setDoc(doc(db, "users", user?.uid), {
         userName: user?.displayName,
         avatar: user?.photoURL,
@@ -19,6 +19,5 @@ export async function test() {
       });
       const relations = await setDoc(doc(db, "relations", user?.uid), {});
     }
-    // window.location.replace(window.location.origin + "/feed");
   }
 }

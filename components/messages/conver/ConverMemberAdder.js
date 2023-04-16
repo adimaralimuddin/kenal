@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
-import UseMessages from "../../../controls/chats/useMessages";
+import UseMessages from "../../../controls/chats/messages/useMessages";
 import useUsers from "../../../controls/useUsers";
 import UserLists from "../../user/UserLists";
 
 const ConverMemberAdder = ({ set, friends }) => {
   const { getFriends } = useUsers();
-  const { addMember, selectedConverse } = UseMessages();
+  const { addMember, converseSnap } = UseMessages();
   useEffect(() => {
     getFriends((friends) => {
       set({ friends });
@@ -17,8 +17,8 @@ const ConverMemberAdder = ({ set, friends }) => {
   };
 
   const filteredUsers = [
-    ...(selectedConverse?.members || []),
-    ...(selectedConverse?.requestedMembers || []),
+    ...(converseSnap?.members || []),
+    ...(converseSnap?.requestedMembers || []),
   ];
 
   return (

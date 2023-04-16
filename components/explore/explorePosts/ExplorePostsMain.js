@@ -5,7 +5,12 @@ import ExplorePostItem from "./ExplorePostItem";
 const ExplorePostsMain = () => {
   const router = useRouter();
   const subtab = router.query?.exploreSubTab;
-  return <div className="">{subtab === "post" && <ExplorePostItem />}</div>;
+  return (
+    <div className="">
+      subtab {subtab}
+      {subtab === "post" && <ExplorePostItem />}
+    </div>
+  );
 };
 
 export default ExplorePostsMain;
