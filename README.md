@@ -1,34 +1,46 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+live preview - https://kenal.vercel.app/
+on my portfolio - https://adimaralimuddin.com/#project-div
 
-## Getting Started
+# KENAL
+## Kenal is a social media web app with full features that allows users to stay connected in realtime.
 
-First, run the development server:
+# FEATURES
+1. Responsive
+2. Dark Theme
+3. Realtime
+4. Posts
+5. Stories
+6. Comments
+7. Replies
+8. Chats
+9. Reactions
+10. Relations
+11. Notification
+12. Privacy
+13. Settings
+14. Blockings
+15. Media - Image & Videos
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+## TECH STACK
+1. Javascript
+2. ReactJs / NextJS
+3. TailwindCss
+4. Zustand
+5. Firebase firestore
+6. Firebase storage
+7. Firebase authentication
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## SITE MAP
+1. homepage - https://kenal.vercel.app/
+2. feed - https://kenal.vercel.app/feed
+3. profile page - https://kenal.vercel.app/feed?tab=profile
+4. notifications - https://kenal.vercel.app/feed?tab=notification
+5. messages - https://kenal.vercel.app/feed?tab=messages#messageFeed
+6. message requests - https://kenal.vercel.app/feed?tab=messages&messageTab=request
+7. settings page - https://kenal.vercel.app/feed?tab=settings
+8. followers - https://kenal.vercel.app/feed?tab=profile&messageTab=all&profileTab=followers
+9. followings - https://kenal.vercel.app/feed?tab=profile&messageTab=all&profileTab=followings
+10. story - click on any story item
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
